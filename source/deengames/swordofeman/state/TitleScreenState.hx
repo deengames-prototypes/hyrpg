@@ -23,8 +23,6 @@ class TitleScreenState extends FlxState
     sprite.x  = (FlxG.width - sprite.width) / 2;
     sprite.y = (FlxG.height - sprite.height) / 2;
 		super.create();
-
-		MouseEventManager.add(sprite, null, fadeOut);
 	}
 
 	/**
@@ -42,15 +40,13 @@ class TitleScreenState extends FlxState
 	override public function update():Void
 	{
 		super.update();
-	}
-
-	private function fadeOut(sprite:FlxSprite) : Void
-	{
-		FlxG.camera.fade(FlxColor.BLACK, 0.5, false, createGame);
+		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed) {
+			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, createGame);
+		}
 	}
 
 	private function createGame() : Void
 	{
-		FlxG.switchState(new deenGames.swordOfEman.state.CreateGameState());
+		FlxG.switchState(new deengames.swordofeman.state.CreateGameState());
 	}
 }

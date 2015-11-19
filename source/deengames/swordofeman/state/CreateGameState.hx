@@ -8,6 +8,7 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 import flixel.util.FlxColor;
 import flixel.plugin.MouseEventManager;
+import flixel.input.keyboard.FlxKeyboard;
 /**
  * A FlxState which can be used for the game's menu.
  */
@@ -25,7 +26,6 @@ class CreateGameState extends FlxState
 		text.x = (FlxG.width - text.width) / 4;
 		text.y = (FlxG.height - text.height) / 3;
 
-		startGame();
 		super.create();
 	}
 
@@ -44,10 +44,8 @@ class CreateGameState extends FlxState
 	override public function update():Void
 	{
 		super.update();
-	}
-
-	private function startGame() : Void
-	{
-		FlxG.switchState(new LocationMapState());
+		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed) {
+			FlxG.switchState(new LocationMapState());
+		}
 	}
 }
