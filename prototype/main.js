@@ -6,7 +6,18 @@ Crafty.c('Player', {
   },
 
   getDamage: function() {
-    return Math.round(8 + Math.random(6));
+    return randomBetween(8, 12);
+  },
+
+  attack: function(target, strength) {
+    damage = this.getDamage();
+    target.hp -= damage;
+    target.refresh();
+    var message = 'Player attacks for ' + damage + ' damage!';
+    if (target.hp <= 0) {
+      message += " Enemy dies!!";
+    }
+    Crafty('StatusBar').show(message);
   }
 })
 
@@ -14,19 +25,11 @@ Crafty.c('Enemy', {
   init: function() {
     var self = this;
     this.requires('Actor, Text2').color('red');
-      self.hp = 30;
-      this.click(function() {
-        damage = Crafty('Player').getDamage();
-        self.hp -= damage;
-        self.refresh();
-        var message = 'Player attacks for ' + damage + ' damage!';
-        if (self.hp <= 0) {
-          message += " Enemy dies!!";
-        }
-        Crafty('StatusBar').show(message);
-      });
-
-      self.refresh();
+    self.hp = 30;
+    self.refresh();
+    this.click(function() {
+      Crafty('Player').attack(self);
+    });
   },
 
   refresh: function() {
