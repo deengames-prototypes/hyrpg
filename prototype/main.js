@@ -6,8 +6,7 @@ Crafty.c('Player', {
   },
 
   getDamage: function() {
-    // 8-12
-    return Math.round(8 + Math.random(4));
+    return Math.round(8 + Math.random(6));
   }
 })
 
@@ -20,6 +19,11 @@ Crafty.c('Enemy', {
         damage = Crafty('Player').getDamage();
         self.hp -= damage;
         self.refresh();
+        var message = 'Player attacks for ' + damage + ' damage!';
+        if (self.hp <= 0) {
+          message += " Enemy dies!!";
+        }
+        Crafty('StatusBar').show(message);
       });
 
       self.refresh();
@@ -34,10 +38,21 @@ Crafty.c('Enemy', {
   }
 })
 
+Crafty.c('StatusBar', {
+  init: function() {
+    this.requires('Actor, Text2').color('#BBBBBB');
+  },
+
+  show: function(message) {
+    this.text(message).size(720, 36);
+  }
+});
+
 Game = {
   start: function() {
     Crafty.init(720, 405);
     Crafty.background('#4A4');
+    Crafty.e('StatusBar').show('The battle begins!');
     Crafty.e('Player');
     // Fake enemy
     Crafty.e('Enemy').move(640, 64);
