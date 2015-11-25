@@ -1,5 +1,6 @@
 Crafty.c('Player', {
   init: function() {
+    this.target = null;
     this.requires('Actor, Text2')
       .text('HP: 50')
       .size(64, 64).move(64, 64).color('blue');
@@ -9,26 +10,44 @@ Crafty.c('Player', {
     return randomBetween(8, 12);
   },
 
-  attack: function(target, strength) {
+  attack: function(strength) {
+    if (this.target == null) { return; }
     damage = this.getDamage();
-    target.hp -= damage;
-    target.refresh();
+    this.target.hp -= damage;
+    this.target.refresh();
     var message = 'Player attacks for ' + damage + ' damage!';
-    if (target.hp <= 0) {
+    if (this.target != null && this.target.hp <= 0) {
       message += " Enemy dies!!";
     }
     Crafty('StatusBar').show(message);
+  },
+
+  select: function(target) {
+    this.target = target;
+    var targets = window.targets;
+    for (var i = 0; i < targets.length; i++) {
+      targets[i].color('#aa0000');
+    }
+    if (this.target != null) {
+      this.target.color('red');
+    }
   }
 })
 
 Crafty.c('Enemy', {
   init: function() {
     var self = this;
-    this.requires('Actor, Text2').color('red');
+
+    if (typeof(window.targets) === "undefined") {
+      window.targets = [];
+    }
+    window.targets.push(self);
+
+    this.requires('Actor, Text2').color('#aa0000');
     self.hp = 30;
     self.refresh();
     this.click(function() {
-      Crafty('Player').attack(self);
+      Crafty('Player').select(self);
     });
   },
 
@@ -37,6 +56,7 @@ Crafty.c('Enemy', {
     this.size(40, 40);
     if (this.hp <= 0) {
       this.destroy();
+      Crafty('Player').select(null);
     }
   }
 })
@@ -61,6 +81,10 @@ Game = {
     Crafty.e('Enemy').move(640, 64);
     Crafty.e('Enemy').move(570, 96);
     Crafty.e('Enemy').move(660, 128);
+
+    Crafty.e('Actor').move(25, 350).size(200, 50).color('#ffffaa').click(function() {
+      Crafty('Player').attack('light');
+    });
   }
 }
 
