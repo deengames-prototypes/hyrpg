@@ -6,16 +6,23 @@ Crafty.c('Player', {
       .size(64, 64).move(64, 64).color('blue');
   },
 
-  getDamage: function() {
-    return randomBetween(8, 12);
+  getDamage: function(strength) {
+    if (strength == 'small') {
+      return randomBetween(10, 14);
+    } else if (strength == 'medium') {
+      return randomBetween(12, 17);
+    } else {
+      return randomBetween(14, 20);
+    }
   },
 
   attack: function(strength) {
     if (this.target == null) { return; }
-    damage = this.getDamage();
+    damage = this.getDamage(strength);
+
     this.target.hp -= damage;
     this.target.refresh();
-    var message = 'Player attacks for ' + damage + ' damage!';
+    var message = 'Player ' + strength + '-attacks for ' + damage + ' damage!';
     if (this.target != null && this.target.hp <= 0) {
       message += " Enemy dies!!";
     }
@@ -83,7 +90,13 @@ Game = {
     Crafty.e('Enemy').move(660, 128);
 
     Crafty.e('Actor').move(25, 350).size(200, 50).color('#ffffaa').click(function() {
-      Crafty('Player').attack('light');
+      Crafty('Player').attack('small');
+    });
+    Crafty.e('Actor').move(275, 350).size(200, 50).color('#ffff66').click(function() {
+      Crafty('Player').attack('medium');
+    });
+    Crafty.e('Actor').move(500, 350).size(200, 50).color('#ffff00').click(function() {
+      Crafty('Player').attack('large');
     });
   }
 }
