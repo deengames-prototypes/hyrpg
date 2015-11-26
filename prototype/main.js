@@ -250,7 +250,7 @@ Crafty.c('ComboBar', {
     // Only reason to show = start combo
     self.hitBox = Crafty.e('Actor').size(25, 25).color('red').move(this.attr('x'), this.attr('y'))
       .tween({ x: this.attr('x') + this.attr('w') - 25 }, comboTime).after(comboTime + 0.1, function() {
-        Crafty('Player').finishAttack(null);
+        Crafty('Player').finishAttack(false);
         self.hide();
       });
   }
