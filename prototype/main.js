@@ -8,12 +8,23 @@ Crafty.c('Player', {
       .size(64, 64).move(64, 64).color('blue');
   },
 
+  // Control this distribution to control how players should attack
+  // Consider "efficiency" as the energy cost per one point of damage.
+
+  // If you want all three to be equally efficient, damage is linearly
+  // correlated with cost, eg. S=1-2, M=2-4, L=3-6. With nine points
+  // of energy, the ranges are: all Sx9 = 9-18, Mx4 + S = 9-18, Lx3 = 9-18)
+
+  // On the other hand, if you want M and L to "feel" stronger, you can use
+  // damage ranges like S=1-2, M=4-6, and L=7-10. This gives you distributions
+  // of Sx9 = 9-18, Mx4 + S = 17-26, Lx3 = 21-30. But in this case, what reason
+  // would players ever use for S and even M attacks?
   getDamage: function(attack) {
     switch(attack) {
         case "L":
-          return randomBetween(7, 9); // 21-27
+          return randomBetween(3, 6); // 9-18
         case "M":
-          return randomBetween(4, 6); // 16-24
+          return randomBetween(2, 4); // 9-18
         case "S":
           return randomBetween(1, 2); // 9-18
     }
@@ -24,7 +35,6 @@ Crafty.c('Player', {
     var toReturn = true;
     // Try to get the cost. If more than 9, revert last push.
     this.queue.push(strength);
-    console.log("Cost = " + this.getComboCost() + " and energy is " + config('max_energy'));
     if (this.getComboCost() > config('max_energy')) {
       this.queue.pop();
       var toReturn = false;
