@@ -171,6 +171,12 @@ Crafty.c('Enemy', {
   init: function() {
     var self = this;
 
+    // What's my unique number?
+    if (typeof(window.nextEnemyNumber) === 'undefined') {
+      window.nextEnemyNumber = 1;
+    }
+    this.id = window.nextEnemyNumber++;
+
     if (typeof(window.targets) === "undefined") {
       window.targets = [];
     }
@@ -185,8 +191,8 @@ Crafty.c('Enemy', {
   },
 
   refresh: function() {
-    this.text(this.hp);
-    this.size(40, 40);
+    this.text("M" + this.id + ":" + this.hp);
+    this.size(60, 40);
     if (this.hp <= 0) {
       this.destroy();
       Crafty('Player').target = null;
@@ -256,9 +262,9 @@ Game = {
     Crafty.e('StatusBar').show('The battle begins!');
     Crafty.e('Player');
     // Fake enemy
-    Crafty.e('Enemy').move(640, 64);
-    Crafty.e('Enemy').move(570, 96);
-    Crafty.e('Enemy').move(660, 128);
+    Crafty.e('Enemy').move(620, 64);
+    Crafty.e('Enemy').move(550, 96);
+    Crafty.e('Enemy').move(640, 128);
 
     Crafty.e('Actor, Text2').text("S").move(25, 300).size(50, 50).color('#ffffaa').click(function() {
       Crafty('Player').attack('S');
