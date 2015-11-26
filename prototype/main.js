@@ -44,14 +44,20 @@ Crafty.c('Player', {
   },
 
   updateComboText: function() {
+    var comboString = this.getComboString();
+    var cost = this.getComboCost();
+    Crafty('ComboText').text("Combo: " + comboString + " (" + cost + ")");
+  },
+
+  getComboString: function() {
     var comboString = "";
 
     for (var i = 0; i < this.queue.length; i++) {
       var attack = this.queue[i];
       comboString += attack;
     }
-    var cost = this.getComboCost();
-    Crafty('ComboText').text("Combo: " + comboString + " (" + cost + ")");
+
+    return comboString;
   },
 
   getComboCost: function() {
@@ -81,16 +87,22 @@ Crafty.c('Player', {
     }
     else if (this.enqueue(attack)) {
       damage = this.getDamage(attack);
-
-      this.target.hp -= damage;
-      this.target.refresh();
-
       var message = 'Player ' + attack + '-attacks for ' + damage + ' damage!';
+
+      var combo = this.isComboStrike();
+      if (combo != null) {
+        damage += combo.damage;
+        message = 'Player ' + combo.name.toUpperCase() + " for " + damage + ' damage!';
+      }
+
       if (this.target != null && this.target.hp <= 0) {
         message += " Enemy dies!!";
       }
 
+      this.target.hp -= damage;
+      this.target.refresh();
       this.updateComboText();
+
       Crafty('StatusBar').show(message);
 
       if (this.getComboCost() == config('max_energy')) {
@@ -100,6 +112,20 @@ Crafty.c('Player', {
     } else {
       Crafty('StatusBar').show('Not enough energy!');
     }
+  },
+
+  // Return a combo object if the last attack ignited a combo
+  // Otherwise, returns null
+  isComboStrike: function() {
+    var comboString = this.getComboString().toUpperCase();
+    var combos = extern('combos');
+    for (var i = 0; i < combos.length; i++) {
+      var combo = combos[i];
+      if (comboString.endsWith(combo.moves.toUpperCase())) {
+        return combo;
+      }
+    }
+    return null;
   },
 
   select: function(target) {

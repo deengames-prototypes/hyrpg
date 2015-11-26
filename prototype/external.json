@@ -1,3 +1,9 @@
 externs = {
-  "max_energy": 9
+  "max_energy": 9,
+  "combos": [
+    // Current methodology: combo damage = cost * 2
+    { "name": "uppercut", "moves": "SSL", "damage": 10 },
+    { "name": "feint-strike", "moves": "MSL", "damage": 12 },
+    { "name": "jutsu", "moves": "SMSML", "damage": 18 }
+  ]
 }
