@@ -15,13 +15,13 @@ Crafty.c('Player', {
       var attack = this.queue[i];
       switch(attack) {
           case "L":
-            cost += randomBetween(7, 13);
+            cost += randomBetween(7, 9);
             break;
           case "M":
-            cost += randomBetween(6, 10);
+            cost += randomBetween(4, 6);
             break;
           case "S":
-            cost += randomBetween(5, 7);
+            cost += randomBetween(1, 3);
             break;
       }
     }
@@ -86,9 +86,14 @@ Crafty.c('Player', {
   },
 
   select: function(target) {
+    // Clear queue only if we had someone selected
+    if (this.target != null) {
+      this.queue = [];
+      this.updateComboText();
+    }
+
     this.target = target;
-    this.queue = [];
-    this.updateComboText();
+
     var targets = window.targets;
     for (var i = 0; i < targets.length; i++) {
       targets[i].color('#aa0000');
