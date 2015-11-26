@@ -106,11 +106,11 @@ Crafty.c('Player', {
     // Attack is queued; it's the last move we did.
     var attack = this.queue[this.queue.length - 1];
     var damage = this.getDamage(attack);
-    var message = 'Player ' + attack + '-attacks for ' + damage + ' damage!';
+    var message = 'Player ' + attack + '-attacks ' + this.target.id + ' for ' + damage + ' damage!';
     var hitOrMiss = 'SMASHED';
     var combo = this.isComboStrike();
 
-    if (comboSuccess != null) {
+    if (typeof(comboSuccess) !== "undefined" && comboSuccess != null) {
       // Combo hit or missed
       if (comboSuccess == true) {
         damage += combo.damage;
@@ -119,7 +119,7 @@ Crafty.c('Player', {
         hitOrMiss = 'grazed';
       }
 
-      message = 'Player ' + hitOrMiss + " a " + combo.name + " for " + damage + ' damage!';
+      message = 'Player ' + hitOrMiss + " a " + combo.name + " on " + this.target.id + " for " + damage + ' damage!';
     }
 
     if (this.target != null && this.target.hp <= 0) {
@@ -175,7 +175,7 @@ Crafty.c('Enemy', {
     if (typeof(window.nextEnemyNumber) === 'undefined') {
       window.nextEnemyNumber = 1;
     }
-    this.id = window.nextEnemyNumber++;
+    this.id = "M" + window.nextEnemyNumber++;
 
     if (typeof(window.targets) === "undefined") {
       window.targets = [];
@@ -191,7 +191,7 @@ Crafty.c('Enemy', {
   },
 
   refresh: function() {
-    this.text("M" + this.id + ":" + this.hp);
+    this.text(this.id + ":" + this.hp);
     this.size(60, 40);
     if (this.hp <= 0) {
       this.destroy();
@@ -250,6 +250,7 @@ Crafty.c('ComboBar', {
     // Only reason to show = start combo
     self.hitBox = Crafty.e('Actor').size(25, 25).color('red').move(this.attr('x'), this.attr('y'))
       .tween({ x: this.attr('x') + this.attr('w') - 25 }, comboTime).after(comboTime + 0.1, function() {
+        Crafty('Player').finishAttack(null);
         self.hide();
       });
   }
