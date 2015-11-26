@@ -30,7 +30,8 @@ Crafty.c('Player', {
     }
   },
 
-  // Returns true if the attack was queued, false if not
+  // Enqueues an attack. Returns true if the attack was queued, false if not
+  // (if we didn't have enough energy to add the attack, we return false).
   enqueue: function(strength) {
     var toReturn = true;
     // Try to get the cost. If more than 9, revert last push.
@@ -81,41 +82,66 @@ Crafty.c('Player', {
     return cost;
   },
 
+  // Called from attack buttons. Enqueues an attack, checks for a combo strike,
+  // and shows a combo bar if applicable. See: finishAttack.
   attack: function(attack) {
     if (this.target == null) {
       Crafty('StatusBar').show("Select a target first!");
     }
     else if (this.enqueue(attack)) {
-      damage = this.getDamage(attack);
-      var message = 'Player ' + attack + '-attacks for ' + damage + ' damage!';
-
       var combo = this.isComboStrike();
       if (combo != null) {
-        damage += combo.damage;
-        message = 'Player ' + combo.name.toUpperCase() + " for " + damage + ' damage!';
-      }
-
-      if (this.target != null && this.target.hp <= 0) {
-        message += " Enemy dies!!";
-      }
-
-      this.target.hp -= damage;
-      this.target.refresh();
-      this.updateComboText();
-
-      Crafty('StatusBar').show(message);
-
-      if (this.getComboCost() == config('max_energy')) {
-        this.queue = [];
-        this.updateComboText();
+        Crafty('ComboBar').show();
+      } else {
+        this.finishAttack();
       }
     } else {
       Crafty('StatusBar').show('Not enough energy!');
     }
   },
 
+  // comboSuccess is triary: true (combo hit), false (combo missed), and null (no combo)
+  // Called on a regular attack, and combo (after hit or miss)
+  finishAttack: function(comboSuccess) {
+    // Attack is queued; it's the last move we did.
+    var attack = this.queue[this.queue.length - 1];
+    var damage = this.getDamage(attack);
+    var message = 'Player ' + attack + '-attacks for ' + damage + ' damage!';
+    var hitOrMiss = 'SMASHED';
+    var combo = this.isComboStrike();
+
+    if (comboSuccess != null) {
+      // Combo hit or missed
+      if (comboSuccess == true) {
+        damage += combo.damage;
+      } else {
+        damage += Math.round(combo.damage *= 0.5);
+        hitOrMiss = 'grazed';
+      }
+
+      message = 'Player ' + hitOrMiss + " a " + combo.name + " for " + damage + ' damage!';
+    }
+
+    if (this.target != null && this.target.hp <= 0) {
+      message += " Enemy dies!!";
+    }
+
+    this.target.hp -= damage;
+    this.target.refresh();
+    this.updateComboText();
+
+    Crafty('StatusBar').show(message);
+
+    if (this.getComboCost() == config('max_energy')) {
+      this.queue = [];
+      this.updateComboText();
+    }
+  },
+
   // Return a combo object if the last attack ignited a combo
   // Otherwise, returns null
+  // WARNING: DO NOT MAKE THIS MUTABLE. It's called from finishAttack to
+  // quickly re-calculate the current combo, out of context of attack.
   isComboStrike: function() {
     var comboString = this.getComboString().toUpperCase();
     var combos = extern('combos');
@@ -184,6 +210,50 @@ Crafty.c('StatusBar', {
   }
 });
 
+Crafty.c('ComboBar', {
+  init: function() {
+    this.requires('Actor').color('white').size(675, 15).move(25, 370);
+    this.hitArea = Crafty.e('Actor').color('purple').size(150, 25).move(475, 365);
+    var self = Crafty('ComboBar');
+    this.nowButton = Crafty.e('Actor, Text2').text('!!!').size(50, 50).move(250, 300).color('red').click(function() {
+      // AABB: does hitBox overlap hitArea? Just compare X, because Y lines up.
+      // This includes hitBox partially overlapping hitArea.
+      if (self.hitBox != null && self.hitBox.attr('x') >= self.hitArea.attr('x') &&
+        self.hitBox.attr('x') + self.hitBox.attr('w') <= self.hitArea.attr('x') + self.hitArea.attr('w')) {
+          // SUCCESS!
+          Crafty('Player').finishAttack(true);
+        } else {
+          // Missed.
+          Crafty('Player').finishAttack(false);
+        }
+        self.hide();
+    });
+    this.hide();
+  },
+
+  hide: function() {
+    this.visible = false;
+    this.hitArea.visible = false;
+    this.nowButton.visible = false;
+    if (this.hitBox != null) {
+      this.hitBox.die();
+    }
+  },
+
+  show: function() {
+    this.visible = true;
+    this.hitArea.visible = true;
+    this.nowButton.visible = true;
+
+    var self = this;
+    // Only reason to show = start combo
+    self.hitBox = Crafty.e('Actor').size(25, 25).color('red').move(this.attr('x'), this.attr('y'))
+      .tween({ x: this.attr('x') + this.attr('w') - 25 }, 1).after(1.1, function() {
+        self.hide();
+      });
+  }
+});
+
 Game = {
   start: function() {
     Crafty.init(720, 405);
@@ -195,16 +265,17 @@ Game = {
     Crafty.e('Enemy').move(570, 96);
     Crafty.e('Enemy').move(660, 128);
 
-    Crafty.e('Actor, Text2').text("S").move(25, 350).size(50, 50).color('#ffffaa').click(function() {
+    Crafty.e('Actor, Text2').text("S").move(25, 300).size(50, 50).color('#ffffaa').click(function() {
       Crafty('Player').attack('S');
     });
-    Crafty.e('Actor, Text2').text("M").move(100, 350).size(50, 50).color('#ffff66').click(function() {
+    Crafty.e('Actor, Text2').text("M").move(100, 300).size(50, 50).color('#ffff66').click(function() {
       Crafty('Player').attack('M');
     });
-    Crafty.e('Actor, Text2').text("L").move(175, 350).size(50, 50).color('#ffff00').click(function() {
+    Crafty.e('Actor, Text2').text("L").move(175, 300).size(50, 50).color('#ffff00').click(function() {
       Crafty('Player').attack('L');
     });
-    Crafty.e('Actor, Text2, ComboText').move(350, 350).text('Combo: 0')
+    Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
+    Crafty.e('ComboBar');
   }
 }
 
