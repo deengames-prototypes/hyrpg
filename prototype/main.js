@@ -1,36 +1,94 @@
 Crafty.c('Player', {
   init: function() {
     this.target = null;
+    this.queue = [];
+
     this.requires('Actor, Text2')
       .text('HP: 50')
       .size(64, 64).move(64, 64).color('blue');
   },
 
-  getDamage: function(strength) {
-    if (strength == 'small') {
-      return randomBetween(10, 14);
-    } else if (strength == 'medium') {
-      return randomBetween(12, 17);
-    } else {
-      return randomBetween(14, 20);
+  getDamage: function() {
+    var cost = 0;
+
+    for (var i = 0; i < this.queue.length; i++) {
+      var attack = this.queue[i];
+      switch(attack) {
+          case "L":
+            cost += randomBetween(7, 13);
+            break;
+          case "M":
+            cost += randomBetween(6, 10);
+            break;
+          case "S":
+            cost += randomBetween(5, 7);
+            break;
+      }
     }
+
+    return cost;
   },
 
-  attack: function(strength) {
+  enqueue: function(strength) {
+    // Try to get the cost. If more than 9, revert last push.
+    this.queue.push(strength);
+    if (this.getComboCost() > 9) {
+      this.queue.pop();
+    }
+    this.updateComboText();
+  },
+
+  updateComboText: function() {
+    var comboString = "";
+
+    for (var i = 0; i < this.queue.length; i++) {
+      var attack = this.queue[i];
+      comboString += attack;
+    }
+    var cost = this.getComboCost();
+    Crafty('ComboText').text("Combo: " + comboString + " (" + cost + ")");
+  },
+
+  getComboCost: function() {
+    var cost = 0;
+
+    for (var i = 0; i < this.queue.length; i++) {
+      var attack = this.queue[i];
+      switch(attack) {
+          case "L":
+            cost += 3;
+            break;
+          case "M":
+            cost += 2;
+            break;
+          case "S":
+            cost += 1;
+            break;
+      }
+    }
+
+    return cost;
+  },
+
+  attack: function() {
     if (this.target == null) { return; }
-    damage = this.getDamage(strength);
+    damage = this.getDamage();
 
     this.target.hp -= damage;
     this.target.refresh();
-    var message = 'Player ' + strength + '-attacks for ' + damage + ' damage!';
+    var message = 'Player attacks for ' + damage + ' damage!';
     if (this.target != null && this.target.hp <= 0) {
       message += " Enemy dies!!";
     }
+    this.queue = [];
+    this.updateComboText();
     Crafty('StatusBar').show(message);
   },
 
   select: function(target) {
     this.target = target;
+    this.queue = [];
+    this.updateComboText();
     var targets = window.targets;
     for (var i = 0; i < targets.length; i++) {
       targets[i].color('#aa0000');
@@ -89,15 +147,19 @@ Game = {
     Crafty.e('Enemy').move(570, 96);
     Crafty.e('Enemy').move(660, 128);
 
-    Crafty.e('Actor').move(25, 350).size(200, 50).color('#ffffaa').click(function() {
-      Crafty('Player').attack('small');
+    Crafty.e('Actor, Text2').text("S").move(25, 350).size(50, 50).color('#ffffaa').click(function() {
+      Crafty('Player').enqueue('S');
     });
-    Crafty.e('Actor').move(275, 350).size(200, 50).color('#ffff66').click(function() {
-      Crafty('Player').attack('medium');
+    Crafty.e('Actor, Text2').text("M").move(100, 350).size(50, 50).color('#ffff66').click(function() {
+      Crafty('Player').enqueue('M');
     });
-    Crafty.e('Actor').move(500, 350).size(200, 50).color('#ffff00').click(function() {
-      Crafty('Player').attack('large');
+    Crafty.e('Actor, Text2').text("L").move(175, 350).size(50, 50).color('#ffff00').click(function() {
+      Crafty('Player').enqueue('L');
     });
+    Crafty.e('Actor, Text2').text("Attack").move(250, 350).size(50, 50).color('#ff0000').click(function() {
+      Crafty('Player').attack();
+    });
+    Crafty.e('Actor, Text2, ComboText').move(350, 350).text('Combo: 0')
   }
 }
 
