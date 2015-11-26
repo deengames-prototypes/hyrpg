@@ -155,12 +155,6 @@ Crafty.c('Player', {
   },
 
   select: function(target) {
-    // Clear queue only if we had someone selected
-    if (this.target != null) {
-      this.queue = [];
-      this.updateComboText();
-    }
-
     this.target = target;
 
     var targets = window.targets;
@@ -246,9 +240,10 @@ Crafty.c('ComboBar', {
     this.nowButton.visible = true;
 
     var self = this;
+    var comboTime = extern('combo_time_seconds');
     // Only reason to show = start combo
     self.hitBox = Crafty.e('Actor').size(25, 25).color('red').move(this.attr('x'), this.attr('y'))
-      .tween({ x: this.attr('x') + this.attr('w') - 25 }, 1).after(1.1, function() {
+      .tween({ x: this.attr('x') + this.attr('w') - 25 }, comboTime).after(comboTime + 0.1, function() {
         self.hide();
       });
   }

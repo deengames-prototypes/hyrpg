@@ -1,5 +1,6 @@
 externs = {
   "max_energy": 9,
+  "combo_time_seconds": 0.8,
   "combos": [
     // Current methodology: combo damage = cost * 2
     { "name": "uppercut", "moves": "SSL", "damage": 10 },
