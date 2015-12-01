@@ -3,8 +3,9 @@ externs = {
   "combo_time_seconds": 0.8,
   "combos": [
     // Current methodology: combo damage = cost * 2
-    { "name": "uppercut", "moves": "SSL", "damage": 10 },
-    { "name": "feint-strike", "moves": "MSL", "damage": 12 },
-    { "name": "jutsu", "moves": "SMSML", "damage": 18 }
+    // Note you can chain the first and second together ...
+    { "name": "uppercut", "moves": "SSM", "damage": 8 },
+    { "name": "feint-strike", "moves": "ML", "damage": 10 },
+    { "name": "jutsu", "moves": "MSL", "damage": 12 }
   ]
 }
