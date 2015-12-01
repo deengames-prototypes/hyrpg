@@ -2,10 +2,16 @@ Crafty.c('Player', {
   init: function() {
     this.target = null;
     this.queue = [];
+    var self = this;
 
     this.requires('Actor, Text2')
       .text('HP: 50')
-      .size(64, 64).move(64, 64).color('blue');
+      .size(64, 64).move(64, 64).color('blue')
+      .keyPress('SPACE', function() {
+        if (self.isComboStrike()) {
+          Crafty('ComboBar').triggerCombo();
+        }
+      });
   },
 
   // Control this distribution to control how players should attack
@@ -216,19 +222,23 @@ Crafty.c('ComboBar', {
     this.hitArea = Crafty.e('Actor').color('purple').size(150, 25).move(475, 365);
     var self = Crafty('ComboBar');
     this.nowButton = Crafty.e('Actor, Text2').text('!!!').size(50, 50).move(250, 300).color('red').click(function() {
-      // AABB: does hitBox overlap hitArea? Just compare X, because Y lines up.
-      // This includes hitBox partially overlapping hitArea.
-      if (self.hitBox != null && self.hitBox.attr('x') >= self.hitArea.attr('x') &&
-        self.hitBox.attr('x') + self.hitBox.attr('w') <= self.hitArea.attr('x') + self.hitArea.attr('w')) {
-          // SUCCESS!
-          Crafty('Player').finishAttack(true);
-        } else {
-          // Missed.
-          Crafty('Player').finishAttack(false);
-        }
-        self.hide();
+      self.triggerCombo();
     });
     this.hide();
+  },
+
+  triggerCombo: function() {
+    // AABB: does hitBox overlap hitArea? Just compare X, because Y lines up.
+    // This includes hitBox partially overlapping hitArea.
+    if (this.hitBox != null && this.hitBox.attr('x') >= this.hitArea.attr('x') &&
+      this.hitBox.attr('x') + this.hitBox.attr('w') <= this.hitArea.attr('x') + this.hitArea.attr('w')) {
+        // SUCCESS!
+        Crafty('Player').finishAttack(true);
+      } else {
+        // Missed.
+        Crafty('Player').finishAttack(false);
+      }
+      this.hide();
   },
 
   hide: function() {
