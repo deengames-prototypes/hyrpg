@@ -8,7 +8,7 @@ Crafty.c('Player', {
       .text('HP: 50')
       .size(64, 64).move(64, 64).color('blue')
       .keyPress('SPACE', function() {
-        if (self.isComboStrike()) {
+        if (Crafty('ComboBar').visible && self.isComboStrike()) {
           Crafty('ComboBar').triggerCombo();
         }
       });
@@ -139,8 +139,8 @@ Crafty.c('Player', {
     Crafty('StatusBar').show(message);
 
     if (this.getComboCost() == config('max_energy')) {
-      this.queue = [];
       this.updateComboText();
+      Game.endPlayerTurn();
     }
   },
 
@@ -288,6 +288,11 @@ Game = {
     });
     Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
     Crafty.e('ComboBar');
+  },
+
+  endPlayerTurn: function() {
+    var player = Crafty('Player');
+    player.queue = [];
   }
 }
 
