@@ -6,9 +6,9 @@ Crafty.c('Player', {
     var self = this;
 
     this.requires('Actor, Text2')
-      .size(64, 64).move(64, 64).color('blue')
+      .move(64, 64).color('blue')
       .keyPress('SPACE', function() {
-        if (Crafty('TimingBar').visible && self.isComboStrike()) {
+        if (Crafty('TimingBar').visible) {
           Crafty('TimingBar').checkForHit();
         }
       });
@@ -26,7 +26,8 @@ Crafty.c('Player', {
   },
 
   refresh: function() {
-    this.text('HP: ' + this.health);
+    this.text('HP: ' + this.health)
+      .size(64, 64);
   },
 
   // Control this distribution to control how players should attack
@@ -250,9 +251,6 @@ Crafty.c('TimingBar', {
     this.requires('Actor').color('white').size(675, 15).move(25, 370);
     this.hitArea = Crafty.e('Actor').color('purple').size(150, 25).move(475, 365);
     var self = Crafty('TimingBar');
-    this.nowButton = Crafty.e('Actor, Text2').text('!!!').size(50, 50).move(250, 300).color('red').click(function() {
-      self.checkForHit();
-    });
     this.hide();
   },
 
@@ -273,7 +271,6 @@ Crafty.c('TimingBar', {
   hide: function() {
     this.visible = false;
     this.hitArea.visible = false;
-    this.nowButton.visible = false;
     if (this.hitBox != null) {
       this.hitBox.die();
     }
@@ -282,7 +279,6 @@ Crafty.c('TimingBar', {
   show: function() {
     this.visible = true;
     this.hitArea.visible = true;
-    this.nowButton.visible = true;
 
     var self = this;
     var comboTime = extern('combo_time_seconds');
