@@ -8,8 +8,8 @@ Crafty.c('Player', {
     this.requires('Actor, Text2')
       .size(64, 64).move(64, 64).color('blue')
       .keyPress('SPACE', function() {
-        if (Crafty('ComboBar').visible && self.isComboStrike()) {
-          Crafty('ComboBar').triggerCombo();
+        if (Crafty('TimingBar').visible && self.isComboStrike()) {
+          Crafty('TimingBar').checkForHit();
         }
       });
       this.refresh();
@@ -112,7 +112,7 @@ Crafty.c('Player', {
     else if (this.enqueue(attack)) {
       var combo = this.isComboStrike();
       if (combo != null) {
-        Crafty('ComboBar').show();
+        Crafty('TimingBar').show();
       } else {
         this.finishAttack();
       }
@@ -245,18 +245,18 @@ Crafty.c('StatusBar', {
   }
 });
 
-Crafty.c('ComboBar', {
+Crafty.c('TimingBar', {
   init: function() {
     this.requires('Actor').color('white').size(675, 15).move(25, 370);
     this.hitArea = Crafty.e('Actor').color('purple').size(150, 25).move(475, 365);
-    var self = Crafty('ComboBar');
+    var self = Crafty('TimingBar');
     this.nowButton = Crafty.e('Actor, Text2').text('!!!').size(50, 50).move(250, 300).color('red').click(function() {
-      self.triggerCombo();
+      self.checkForHit();
     });
     this.hide();
   },
 
-  triggerCombo: function() {
+  checkForHit: function() {
     // AABB: does hitBox overlap hitArea? Just compare X, because Y lines up.
     // This includes hitBox partially overlapping hitArea.
     if (this.hitBox != null && this.hitBox.attr('x') >= this.hitArea.attr('x') &&
@@ -323,7 +323,7 @@ Game = {
     Crafty.e('Button').move(100, 300).color('#ffff66').button('M');
     Crafty.e('Button').move(175, 300).color('#ffff00').button('L');
     Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
-    Crafty.e('ComboBar');
+    Crafty.e('TimingBar');
   },
 
   endPlayerTurn: function() {
