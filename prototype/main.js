@@ -221,16 +221,17 @@ Crafty.c('Enemy', {
 
   attack: function() {
     var damage = this.getDamage();
+    var message = 'attacks'
+    if (randomBetween(0, 100) <= config('enemy_critical_percent')) {
+      damage *= 2;
+      message = 'critically attacks';
+    }
     Crafty('Player').hurt(damage);
-    Crafty('StatusBar').show(this.name + " attacks for " + damage + " health.");
+    Crafty('StatusBar').show(this.name + " " + message + " for " + damage + " health.");
   },
 
   getDamage: function() {
-    var damage = randomBetween(2, 6);
-    if (randomBetween(0, 100) <= config('enemy_critical_percent')) {
-      damage *= 2;
-    }
-    return damage;
+    return randomBetween(2, 6);
   }
 })
 
