@@ -2,16 +2,31 @@ Crafty.c('Player', {
   init: function() {
     this.target = null;
     this.queue = [];
+    this.health = 50;
     var self = this;
 
     this.requires('Actor, Text2')
-      .text('HP: 50')
       .size(64, 64).move(64, 64).color('blue')
       .keyPress('SPACE', function() {
         if (Crafty('ComboBar').visible && self.isComboStrike()) {
           Crafty('ComboBar').triggerCombo();
         }
       });
+      this.refresh();
+  },
+
+  hurt: function(damage) {
+    this.health -= damage;
+    this.health = Math.max(0, this.health);
+    if (this.health == 0) {
+      Crafty.e('Actor, Text2').fontSize(72).color('red').text('You DIED!!');
+      Game.hideUi();
+    }
+    this.refresh();
+  },
+
+  refresh: function() {
+    this.text('HP: ' + this.health);
   },
 
   // Control this distribution to control how players should attack
@@ -28,11 +43,11 @@ Crafty.c('Player', {
   getDamage: function(attack) {
     switch(attack) {
         case "L":
-          return randomBetween(3, 6); // 9-18
+          return randomBetween(3, 7); // 9-18
         case "M":
-          return randomBetween(2, 4); // 9-18
+          return randomBetween(2, 5); // 9-18
         case "S":
-          return randomBetween(1, 2); // 9-18
+          return randomBetween(1, 3); // 9-18
     }
   },
 
@@ -205,7 +220,13 @@ Crafty.c('Enemy', {
   },
 
   attack: function() {
-    Crafty('StatusBar').show(this.name + " ATTACKS!!!");
+    var damage = this.getDamage();
+    Crafty('Player').hurt(damage);
+    Crafty('StatusBar').show(this.name + " attacks for " + damage + " health.");
+  },
+
+  getDamage: function() {
+    return randomBetween(3, 7);
   }
 })
 
@@ -301,6 +322,7 @@ Game = {
   },
 
   endPlayerTurn: function() {
+    var self = this;
     var player = Crafty('Player');
     player.queue = [];
     player.updateComboText();
@@ -312,19 +334,33 @@ Game = {
       Crafty('StatusBar').show('Monsters turn!');
       wait(1, function() {
         foreach('Enemy', function(i, enemy) {
-          enemy.after(i * 1.5, function() {
+          enemy.after(i * config('enemy_ui_delay'), function() {
             enemy.attack();
           });
         });
+      });
+
+      wait(Crafty('Enemy').length * config('enemy_ui_delay') + 1, function() {
+        self.showUi();
       });
     });
   },
 
   hideUi: function() {
+    this.setUiVisible(false);
+    Crafty('Player').select(null);
+  },
+
+  showUi: function() {
+    this.setUiVisible(true);
+  },
+
+  // private
+  setUiVisible: function(boolValue) {
     foreach('Button', function(i, b) {
-      b.visible = false;
+      b.visible = boolValue;
     });
-    Crafty('ComboText').visible = false;
+    Crafty('ComboText').visible = boolValue;
   }
 }
 
