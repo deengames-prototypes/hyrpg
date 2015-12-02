@@ -139,7 +139,6 @@ Crafty.c('Player', {
     Crafty('StatusBar').show(message);
 
     if (this.getComboCost() == config('max_energy')) {
-      this.updateComboText();
       Game.endPlayerTurn();
     }
   },
@@ -181,7 +180,7 @@ Crafty.c('Enemy', {
     if (typeof(window.nextEnemyNumber) === 'undefined') {
       window.nextEnemyNumber = 1;
     }
-    this.id = "M" + window.nextEnemyNumber++;
+    this.name = "M" + window.nextEnemyNumber++;
 
     if (typeof(window.targets) === "undefined") {
       window.targets = [];
@@ -197,7 +196,7 @@ Crafty.c('Enemy', {
   },
 
   refresh: function() {
-    this.text(this.id + ":" + this.hp);
+    this.text(this.name + ":" + this.hp);
     this.size(60, 40);
     if (this.hp <= 0) {
       this.destroy();
@@ -293,6 +292,22 @@ Game = {
   endPlayerTurn: function() {
     var player = Crafty('Player');
     player.queue = [];
+    player.updateComboText();
+
+    // Wait 1s    
+    setTimeout(function() {
+    var enemies = Crafty('Enemy');
+      // convert to array so we can use foreach without closure issues
+      var enemiesArray = [];
+      for (var i = 0; i < enemies.length; i++) { enemiesArray.push(i); }
+
+      enemiesArray.forEach(function(i) {
+        var enemy = Crafty('Enemy').get(i)
+        enemy.after(i, function() {
+          console.log(enemy.name + " " + i + " attacks! ");
+        })
+      });
+    }, 1000);
   }
 }
 
