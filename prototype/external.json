@@ -9,5 +9,7 @@ externs = {
     { "name": "jutsu", "moves": "MSL", "damage": 12 }
   ],
   "enemy_ui_delay": 1.5,
-  "enemy_critical_percent": 10
+  "enemy_critical_percent": 10,
+  // 0 to block all damage on successful block, 1.0 to block nothing
+  "blocked_attack_damage_percent": 0.6
 }
