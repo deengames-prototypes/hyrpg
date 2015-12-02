@@ -226,7 +226,11 @@ Crafty.c('Enemy', {
   },
 
   getDamage: function() {
-    return randomBetween(3, 7);
+    var damage = randomBetween(2, 6);
+    if (randomBetween(0, 100) <= config('enemy_critical_percent')) {
+      damage *= 2;
+    }
+    return damage;
   }
 })
 

@@ -8,5 +8,6 @@ externs = {
     { "name": "feint-strike", "moves": "ML", "damage": 10 },
     { "name": "jutsu", "moves": "MSL", "damage": 12 }
   ],
-  "enemy_ui_delay": 1.5
+  "enemy_ui_delay": 1.5,
+  "enemy_critical_percent": 10
 }
