@@ -347,25 +347,28 @@ Game = {
     player.queue = [];
     player.updateComboText();
 
-    this.hideUi();
+    wait(0.5, function() {
+      self.hideUi();
 
-    wait(1, function() {
-      // Wait before any attacks
-      Crafty('StatusBar').show('Monsters turn!');
       wait(1, function() {
-        foreach('Enemy', function(i, enemy) {
-          // A hack, wrapped in a kludge, wrapped in a delicious pastry shell ...
-          // Account for the time it takes to block/hit, too (timing bar)
-          enemy.after(i * (config('enemy_ui_delay') + config('combo_time_seconds')), function() {
-            Crafty('TimingBar').show();
-            Game.currentEnemy = enemy;
+        // Wait before any attacks
+        Crafty('StatusBar').show('Monsters turn!');
+        wait(1, function() {
+          foreach('Enemy', function(i, enemy) {
+            // A hack, wrapped in a kludge, wrapped in a delicious pastry shell ...
+            // Account for the time it takes to block/hit, too (timing bar)
+            enemy.after(i * (config('enemy_ui_delay') + config('combo_time_seconds')), function() {
+              Crafty('TimingBar').show();
+              Game.currentEnemy = enemy;
+            });
           });
         });
-      });
 
-      wait(Crafty('Enemy').length * (config('enemy_ui_delay') + config('combo_time_seconds')) + 1, function() {
-        self.showUi();
-        Game.currentEnemy = null;
+        wait(Crafty('Enemy').length * (config('enemy_ui_delay') + config('combo_time_seconds')) + 1, function() {
+          self.showUi();
+          Game.currentEnemy = null;
+          Game.turn = 'player';
+        });
       });
     });
   },
