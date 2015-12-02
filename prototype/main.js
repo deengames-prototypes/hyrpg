@@ -112,7 +112,7 @@ Crafty.c('Player', {
     // Attack is queued; it's the last move we did.
     var attack = this.queue[this.queue.length - 1];
     var damage = this.getDamage(attack);
-    var message = 'Player ' + attack + '-attacks ' + this.target.id + ' for ' + damage + ' damage!';
+    var message = 'Player ' + attack + '-attacks ' + this.target.name + ' for ' + damage + ' damage!';
     var hitOrMiss = 'SMASHED';
     var combo = this.isComboStrike();
 
@@ -125,7 +125,7 @@ Crafty.c('Player', {
         hitOrMiss = 'grazed';
       }
 
-      message = 'Player ' + hitOrMiss + " a " + combo.name + " on " + this.target.id + " for " + damage + ' damage!';
+      message = 'Player ' + hitOrMiss + " a " + combo.name + " on " + this.target.name + " for " + damage + ' damage!';
     }
 
     if (this.target != null && this.target.hp <= 0) {
@@ -202,6 +202,10 @@ Crafty.c('Enemy', {
       this.destroy();
       Crafty('Player').target = null;
     }
+  },
+
+  attack: function() {
+    Crafty('StatusBar').show(this.name + " ATTACKS!!!");
   }
 })
 
@@ -265,6 +269,19 @@ Crafty.c('ComboBar', {
   }
 });
 
+Crafty.c('Button', {
+  init: function() {
+    this.requires('Actor, Text2');
+  },
+
+  button: function(attack) {
+    this.text(attack).size(50, 50)
+    .click(function() {
+      Crafty('Player').attack(attack);
+    });
+  }
+});
+
 Game = {
   start: function() {
     Crafty.init(720, 405);
@@ -276,15 +293,9 @@ Game = {
     Crafty.e('Enemy').move(550, 96);
     Crafty.e('Enemy').move(640, 128);
 
-    Crafty.e('Actor, Text2').text("S").move(25, 300).size(50, 50).color('#ffffaa').click(function() {
-      Crafty('Player').attack('S');
-    });
-    Crafty.e('Actor, Text2').text("M").move(100, 300).size(50, 50).color('#ffff66').click(function() {
-      Crafty('Player').attack('M');
-    });
-    Crafty.e('Actor, Text2').text("L").move(175, 300).size(50, 50).color('#ffff00').click(function() {
-      Crafty('Player').attack('L');
-    });
+    Crafty.e('Button').move(25, 300).color('#ffffaa').button('S');
+    Crafty.e('Button').move(100, 300).color('#ffff66').button('M');
+    Crafty.e('Button').move(175, 300).color('#ffff00').button('L');
     Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
     Crafty.e('ComboBar');
   },
@@ -294,20 +305,26 @@ Game = {
     player.queue = [];
     player.updateComboText();
 
-    // Wait 1s    
-    setTimeout(function() {
-    var enemies = Crafty('Enemy');
-      // convert to array so we can use foreach without closure issues
-      var enemiesArray = [];
-      for (var i = 0; i < enemies.length; i++) { enemiesArray.push(i); }
+    this.hideUi();
 
-      enemiesArray.forEach(function(i) {
-        var enemy = Crafty('Enemy').get(i)
-        enemy.after(i, function() {
-          console.log(enemy.name + " " + i + " attacks! ");
-        })
+    wait(1, function() {
+      // Wait before any attacks
+      Crafty('StatusBar').show('Monsters turn!');
+      wait(1, function() {
+        foreach('Enemy', function(i, enemy) {
+          enemy.after(i * 1.5, function() {
+            enemy.attack();
+          });
+        });
       });
-    }, 1000);
+    });
+  },
+
+  hideUi: function() {
+    foreach('Button', function(i, b) {
+      b.visible = false;
+    });
+    Crafty('ComboText').visible = false;
   }
 }
 
