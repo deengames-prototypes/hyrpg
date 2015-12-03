@@ -1,7 +1,9 @@
 # Hyrpg
 
-A procedural, hybrid action-RPG.
+
+A procedural, action-RPG.
 
 - **Procedural:** Each game is different an exciting!
 - **Customizable:** Choose only the RPG features you want!
-- **Hybrid Action-RPG:** Menu-driven, timing-based battles!
+
+[Hybrid-RPG Prototype](http://ashes999.github.io/prototype) 
