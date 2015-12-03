@@ -44,11 +44,11 @@ Crafty.c('Player', {
   getDamage: function(attack) {
     switch(attack) {
         case "L":
-          return randomBetween(3, 7); // 9-18
+          return randomBetween(7, 10); // 21-30 (average is 25)
         case "M":
-          return randomBetween(2, 5); // 9-18
+          return randomBetween(3, 6); // 13-26 (average is 20)
         case "S":
-          return randomBetween(1, 3); // 9-18
+          return randomBetween(1, 2); // 9-18 (average is 14)
     }
   },
 
@@ -223,7 +223,7 @@ Crafty.c('Enemy', {
   attack: function(wasBlocked) {
     var damage = this.getDamage();
     var message = 'attacks'
-    if (randomBetween(0, 100) <= config('enemy_critical_percent')) {
+    if (randomBetween(1, 100) <= config('enemy_critical_percent')) {
       damage *= 2;
       message = 'critically attacks';
     }
@@ -236,7 +236,7 @@ Crafty.c('Enemy', {
   },
 
   getDamage: function() {
-    return randomBetween(2, 6);
+    return randomBetween(2, 5);
   }
 })
 

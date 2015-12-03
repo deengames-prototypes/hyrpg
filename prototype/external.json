@@ -4,8 +4,8 @@ externs = {
   "combos": [
     // Current methodology: combo damage = cost * 2
     // Note you can chain the first and second together ...
-    { "name": "stab", "moves": "SSM", "damage": 8, "element": "scissors" },
-    { "name": "wind vortex", "moves": "ML", "damage": 10, "element": "paper" },
+    { "name": "blade stab", "moves": "SSM", "damage": 8, "element": "scissors" },
+    { "name": "paper vortex", "moves": "ML", "damage": 10, "element": "paper" },
     { "name": "rock fist", "moves": "MSL", "damage": 12, "element": "rock" }
   ],
   "enemy_ui_delay": 1.5,
