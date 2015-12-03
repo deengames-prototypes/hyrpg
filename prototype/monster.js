@@ -44,18 +44,31 @@ Crafty.c('Slime', {
   },
 
   attack: function(wasBlocked) {
-    var damage = this.getDamage();
-    var message = 'attacks'
-    if (randomBetween(1, 100) <= config('enemy_critical_percent')) {
-      damage *= 2;
-      message = 'critically attacks';
+    var split = randomBetween(1, 100) <= config('slime_split_percent');
+    if (split && !wasBlocked) {
+      var s = Crafty.e('Slime').color('#AA6600').move(350, 64 + 32 * Crafty('Enemy').length);
+      s.colour = '#AA6600';
+      s.hp = this.hp;
+      s.refresh();
+      Crafty('StatusBar').show(this.name + " split into two!");
+    } else {
+      var damage = this.getDamage();
+      var message = 'attacks'
+      if (randomBetween(1, 100) <= config('enemy_critical_percent')) {
+        damage *= 2;
+        message = 'critically attacks';
+      }
+      if (wasBlocked == true) {
+        if (split) {
+          message += ' (blocked from splitting)';
+        } else {
+          message += ' (blocked)'
+        }
+        damage = Math.round(damage * config('blocked_attack_damage_percent'));
+      }
+      Crafty('Player').hurt(damage);
+      Crafty('StatusBar').show(this.name + " " + message + " for " + damage + " health.");
     }
-    if (wasBlocked == true) {
-      message += ' (blocked)';
-      damage = Math.round(damage * config('blocked_attack_damage_percent'));
-    }
-    Crafty('Player').hurt(damage);
-    Crafty('StatusBar').show(this.name + " " + message + " for " + damage + " health.");
   },
 
   getDamage: function() {
@@ -73,11 +86,11 @@ Crafty.c('Bee', {
   attack: function(wasBlocked) {
     var damage = this.getDamage();
     var message = 'attacks'
-    if (randomBetween(1, 100) <= config('enemy_poison_percent')  && !wasBlocked) {
+    if (randomBetween(1, 100) <= config('bee_poison_percent')  && !wasBlocked) {
       message += ' and poisons';
 
       // Apply poison damage five times, once per second
-      var poisonDamage = config('enemy_poison_damage');
+      var poisonDamage = config('bee_poison_damage');
       for (var i = 0; i < 5; i++) {
         wait(i + 1, function() {
           Crafty('Player').hurt(poisonDamage / 5);
