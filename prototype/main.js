@@ -180,7 +180,7 @@ Crafty.c('Player', {
 
     var targets = window.targets;
     for (var i = 0; i < targets.length; i++) {
-      targets[i].color('#aa0000');
+      targets[i].color(targets[i].colour);
     }
     if (this.target != null) {
       this.target.color('red');
@@ -203,7 +203,7 @@ Crafty.c('Enemy', {
     }
     window.targets.push(self);
 
-    this.requires('Actor, Text2').color('#aa0000');
+    this.requires('Actor, Text2');
     self.hp = 30;
     self.refresh();
     this.click(function() {
@@ -218,6 +218,16 @@ Crafty.c('Enemy', {
       this.destroy();
       Crafty('Player').target = null;
     }
+  }
+
+  // Missing attack and getDamage functions, since we call derived versions.
+});
+
+Crafty.c('Slime', {
+  init: function() {
+    this.requires('Enemy');
+    this.hp = 30;
+    this.refresh();
   },
 
   attack: function(wasBlocked) {
@@ -238,7 +248,37 @@ Crafty.c('Enemy', {
   getDamage: function() {
     return randomBetween(2, 5);
   }
-})
+});
+
+Crafty.c('Bee', {
+  init: function() {
+    this.requires('Enemy');
+    this.hp = 40;
+    this.refresh();
+  },
+
+  attack: function(wasBlocked) {
+    var damage = this.getDamage();
+    var message = 'attacks'
+    if (randomBetween(1, 100) <= config('enemy_poison_percent')  && !wasBlocked) {
+      message += ' and poisons';
+
+      // Apply poison damage five times, once per second
+      var poisonDamage = config('enemy_poison_damage');
+      for (var i = 0; i < 5; i++) {
+        wait(i + 1, function() {
+          Crafty('Player').hurt(poisonDamage / 5);
+        });
+      }
+    }
+    Crafty('Player').hurt(damage);
+    Crafty('StatusBar').show(this.name + " " + message + " for " + damage + " health.");
+  },
+
+  getDamage: function() {
+    return randomBetween(4, 6);
+  }
+});
 
 Crafty.c('StatusBar', {
   init: function() {
@@ -334,28 +374,26 @@ Game = {
     player.queue = [];
     player.updateComboText();
 
-    wait(0.5, function() {
-      self.hideUi();
+    self.hideUi();
 
+    wait(1, function() {
+      // Wait before any attacks
+      Crafty('StatusBar').show('Monsters turn!');
       wait(1, function() {
-        // Wait before any attacks
-        Crafty('StatusBar').show('Monsters turn!');
-        wait(1, function() {
-          foreach('Enemy', function(i, enemy) {
-            // A hack, wrapped in a kludge, wrapped in a delicious pastry shell ...
-            // Account for the time it takes to block/hit, too (timing bar)
-            enemy.after(i * (config('enemy_ui_delay') + config('combo_time_seconds')), function() {
-              Crafty('TimingBar').show();
-              Game.currentEnemy = enemy;
-            });
+        foreach('Enemy', function(i, enemy) {
+          // A hack, wrapped in a kludge, wrapped in a delicious pastry shell ...
+          // Account for the time it takes to block/hit, too (timing bar)
+          enemy.after(i * (config('enemy_ui_delay') + config('combo_time_seconds')), function() {
+            Crafty('TimingBar').show();
+            Game.currentEnemy = enemy;
           });
         });
+      });
 
-        wait(Crafty('Enemy').length * (config('enemy_ui_delay') + config('combo_time_seconds')) + 1, function() {
-          self.showUi();
-          Game.currentEnemy = null;
-          Game.turn = 'player';
-        });
+      wait(Crafty('Enemy').length * (config('enemy_ui_delay') + config('combo_time_seconds')) + 1, function() {
+        self.showUi();
+        Game.currentEnemy = null;
+        Game.turn = 'player';
       });
     });
   },
@@ -378,7 +416,8 @@ Game = {
   }
 }
 
-Crafty.defineScene('Battle', function(enemyTag) {
+Crafty.defineScene('Battle', function(properties) {
+  console.log("P=" + JSON.stringify(properties));
   Game.turn = 'player';
   Crafty.background('#4A4');
   Crafty.e('StatusBar').show('The battle begins!');
@@ -387,7 +426,8 @@ Crafty.defineScene('Battle', function(enemyTag) {
   var n = randomBetween(2, 4);
   console.log("Facing " + n + " monsters");
   for (var i = 0; i < n; i++) {
-    Crafty.e(enemyTag).move(400 + 64 * i, 64 + 32 * i);
+    var e = Crafty.e(properties.name).color(properties.color).move(400 + 64 * i, 64 + 32 * i);
+    e.colour = properties.color;
   }
 
   Crafty.e('Button').move(25, 300).color('#ffffaa').button('S');
@@ -400,7 +440,10 @@ Crafty.defineScene('Battle', function(enemyTag) {
 Crafty.defineScene('Selection', function() {
   Crafty.background('black');
   Crafty.e('Actor, Text2').color('red').text("Slimes").size(50, 50).move(50, 50).click(function() {
-    Crafty.enterScene('Battle', 'Enemy');
+    Crafty.enterScene('Battle', { name: 'Slime', color: '#880000' });
+  });
+  Crafty.e('Actor, Text2').color('green').text("Bees").size(50, 50).move(150, 50).click(function() {
+    Crafty.enterScene('Battle', { name: 'Bee', color: '#008800' });
   });
 });
 
