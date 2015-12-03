@@ -323,21 +323,8 @@ Crafty.c('Button', {
 
 Game = {
   start: function() {
-    Game.turn = 'player';
     Crafty.init(720, 405);
-    Crafty.background('#4A4');
-    Crafty.e('StatusBar').show('The battle begins!');
-    Crafty.e('Player');
-    // Fake enemy
-    Crafty.e('Enemy').move(620, 64);
-    Crafty.e('Enemy').move(550, 96);
-    Crafty.e('Enemy').move(640, 128);
-
-    Crafty.e('Button').move(25, 300).color('#ffffaa').button('S');
-    Crafty.e('Button').move(100, 300).color('#ffff66').button('M');
-    Crafty.e('Button').move(175, 300).color('#ffff00').button('L');
-    Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
-    Crafty.e('TimingBar');
+    Crafty.enterScene("Selection");
   },
 
   endPlayerTurn: function() {
@@ -390,5 +377,31 @@ Game = {
     Crafty('ComboText').visible = boolValue;
   }
 }
+
+Crafty.defineScene('Battle', function(enemyTag) {
+  Game.turn = 'player';
+  Crafty.background('#4A4');
+  Crafty.e('StatusBar').show('The battle begins!');
+  Crafty.e('Player');
+
+  var n = randomBetween(2, 4);
+  console.log("Facing " + n + " monsters");
+  for (var i = 0; i < n; i++) {
+    Crafty.e(enemyTag).move(400 + 64 * i, 64 + 32 * i);
+  }
+
+  Crafty.e('Button').move(25, 300).color('#ffffaa').button('S');
+  Crafty.e('Button').move(100, 300).color('#ffff66').button('M');
+  Crafty.e('Button').move(175, 300).color('#ffff00').button('L');
+  Crafty.e('Actor, Text2, ComboText').move(350, 300).text('Combo: 0')
+  Crafty.e('TimingBar');
+});
+
+Crafty.defineScene('Selection', function() {
+  Crafty.background('black');
+  Crafty.e('Actor, Text2').color('red').text("Slimes").size(50, 50).move(50, 50).click(function() {
+    Crafty.enterScene('Battle', 'Enemy');
+  });
+});
 
 window.addEventListener('load', Game.start);
