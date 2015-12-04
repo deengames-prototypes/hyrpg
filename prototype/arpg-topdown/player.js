@@ -1,9 +1,27 @@
 Crafty.c('Sword', {
   init: function() {
+    this.requires('Actor').size(64, 16).color('blue');
+
     var self = this;
-    this.requires('Actor').size(64, 16).color('blue').origin('middle left');
-    this.rotation = -45;
-    this.tween({ rotation: 45 }, 0.25);
+    var player = Crafty('Player');
+    var myX;
+    var endRotation;
+
+    if (player.direction == 'right') {
+      this.origin('middle left');
+      myX = player.attr('x') + player.attr('w');
+      this.rotation = -45;
+      endRotation = 45;
+    } else if (player.direction == 'left') {
+      this.origin('middle right');
+      myX = player.attr('x') - this.attr('w');
+      this.rotation = 45;
+      endRotation = -45;
+    }
+
+    this.move(myX, player.attr('y') + (player.attr('h') / 2));
+
+    this.tween({ rotation: endRotation }, 0.25);
     this.one('TweenEnd', function() {
       Crafty('Player').enableControl();
       self.die();
@@ -21,7 +39,7 @@ Crafty.c('Player', {
       if (self.direction == 'left' || self.direction == 'right') {
         // Assume right for testing
         self.disableControl();
-        Crafty.e('Sword').move(self.attr('x') + self.attr('w'), self.attr('y') + (self.attr('h') / 2));
+        Crafty.e('Sword');
       }
     });
 
