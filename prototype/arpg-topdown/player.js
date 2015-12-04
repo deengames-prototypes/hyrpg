@@ -26,6 +26,13 @@ Crafty.c('Sword', {
       Crafty('Player').enableControl();
       self.die();
     });
+
+    this.collide('Monster', function(monsters) {
+      for (var i = 0; i < monsters.length; i++) {
+        var monster = monsters[i].obj;
+        monster.die();
+      }
+    })
   }
 });
 
