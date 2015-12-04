@@ -1,6 +1,6 @@
 Crafty.c('Sword', {
   init: function() {
-    this.requires('Actor').size(64, 16).color('blue');
+    this.requires('Actor').size(64, 16).color('#dddddd');
 
     var self = this;
     var player = Crafty('Player');
