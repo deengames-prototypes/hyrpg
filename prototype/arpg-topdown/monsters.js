@@ -7,6 +7,11 @@ Crafty.c('Monster', {
     var y = randomBetween(0, Game.height - this.attr('y'));
     this.move(x, y);
     this.bind('EnterFrame', this.moveTowardDestination);
+
+    // List of things you can't intersect
+    this.collideWith('Tree');
+    this.collideWith('Monster');
+    this.collideWith('Player');
   },
 
   pickRandomSpot: function() {
@@ -56,7 +61,7 @@ Crafty.c('Sheep', {
 
 Crafty.c('Slime', {
   init: function() {
-    this.requires('Monster').size(40, 32).color('#88ff88');
+    this.requires('Monster').size(48, 48).color('#88ff88');
     this.moveStep = 3;
     var self = this;
 

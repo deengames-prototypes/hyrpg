@@ -63,6 +63,9 @@ Crafty.c('Player', {
       Crafty.e('Sword');
     });
 
+    this.collideWith('Tree');
+    this.collideWith('Monster');
+
     // Keep track of direction
     this.bind('NewDirection', function(dir) {
       // Left/right take precedence over top/bottom/ eg. if left and up are

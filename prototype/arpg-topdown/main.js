@@ -13,7 +13,18 @@ Game = {
     }
 
     Crafty.e('Slime');
+
+    for (var i = 0; i < 8; i++) {
+      Crafty.e('Tree');
+    }
   }
 }
 
 window.addEventListener('load', Game.start);
+
+Crafty.c('Tree', {
+  init: function() {
+    this.requires('Actor').color('#884400').size(24, 24)
+      .move(randomBetween(0, Game.width), randomBetween(0, Game.height));
+  }
+});
