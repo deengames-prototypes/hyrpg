@@ -70,7 +70,7 @@ Crafty.c('Player', {
     this.collideWith('Monster', function() {
       var now = Date.now();
       if (now - self.lastHurt >= 1000) { // 1s or more ago?
-        self.hp -= 5;
+        self.hurt(5);
         self.lastHurt = now;
       }
       self.refresh();
@@ -97,6 +97,15 @@ Crafty.c('Player', {
     this.bind('Moved', function() {
       this.text.attr({ x: this.attr('x'), y: this.attr('y') });
     })
+  },
+
+  hurt: function(damage) {
+    this.hp -= damage;
+    this.hp = Math.max(0, this.hp);
+    if (this.hp == 0) {
+      this.die();
+      Crafty.e('Actor, Text2').fontSize(72).text("GAME OVER!");
+    }
   },
 
   refresh: function() {
