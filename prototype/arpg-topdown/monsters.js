@@ -54,22 +54,29 @@ Crafty.c('Sheep', {
   }
 });
 
-Crafty.c('Tiger', {
+Crafty.c('Slime', {
   init: function() {
-    this.requires('Monster').size(40, 32).color('orange');
+    this.requires('Monster').size(40, 32).color('#88ff88');
+    this.moveStep = 3;
     var self = this;
 
-    this.bind('EnterFrame', function() {
-      if (this.destination == null) {
-        this.destination = self.pickRandomSpot();
+    this.repeatedly(randomBetween(3, 5), function() {
+      if (self.destination == null) {
+        self.pickRandomSpot();
       }
+    });
 
+    this.bind('EnterFrame', function() {
       var p = Crafty('Player');
-      if (Math.abs(self.attr('x') - p.attr('x')) + Math.abs(self.attr('y') - p.attr('y')) <= 250)
+      if (Math.abs(self.attr('x') - p.attr('x')) + Math.abs(self.attr('y') - p.attr('y')) <= 200)
       {
-        this.destination = { x: p.x, y: p.y };
+        self.destination = { x: p.x, y: p.y };
       } else {
-        this.destination = null;
+        if (self.destination == p) {
+          self.destination = null;
+        } else {
+          self.moveTowardDestination();
+        }
       }
     });
   }

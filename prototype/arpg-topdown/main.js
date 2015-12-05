@@ -12,7 +12,7 @@ Game = {
       Crafty.e('Sheep');
     }
 
-    Crafty.e('Tiger');
+    Crafty.e('Slime');
   }
 }
 
