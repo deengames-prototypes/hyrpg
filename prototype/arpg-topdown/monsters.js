@@ -49,11 +49,34 @@ Crafty.c('Monster', {
 Crafty.c('Sheep', {
   init: function() {
     this.requires('Monster').size(32, 32).color('white');
-    this.moveStep = 10;
+    this.moveStep = 5;
     var self = this;
 
     this.repeatedly(randomBetween(3, 5), function() {
-      self.pickRandomSpot();
+      if (!this.isCharging) {
+        self.pickRandomSpot();
+      }
+    });
+
+    this.bind('EnterFrame', function() {
+      var p = Crafty('Player');
+      var d = Math.abs(self.attr('x') - p.attr('x')) + Math.abs(self.attr('y') - p.attr('y'));
+
+      if (!self.isCharging && d <= 200)
+      {
+        self.destination = { x: p.x, y: p.y };
+        self.isCharging = true;
+        this.moveStep = 1;
+        this.color('yellow');
+      } else if (self.isCharging && self.destination != null && Math.abs(self.attr('x') - self.destination.x) +
+        Math.abs(self.attr('y') - self.destination.y) <= 10) { // reached destination
+        self.destination = null;
+        self.isCharging = false;
+        this.moveStep = 5;
+        this.color('white');
+      }
+
+      self.moveTowardDestination();
     });
   }
 });
@@ -75,12 +98,11 @@ Crafty.c('Slime', {
       if (Math.abs(self.attr('x') - p.attr('x')) + Math.abs(self.attr('y') - p.attr('y')) <= 200)
       {
         self.destination = { x: p.x, y: p.y };
+        this.color('green');
       } else {
-        if (self.destination == p) {
-          self.destination = null;
-        } else {
-          self.moveTowardDestination();
-        }
+        self.destination = null;
+        this.color('#88ff88');
+        self.moveTowardDestination();
       }
     });
   }
