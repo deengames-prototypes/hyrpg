@@ -54,6 +54,9 @@ Crafty.c('Sword', {
 Crafty.c('Player', {
   init: function() {
     var self = this;
+    this.hp = 50;
+    this.lastHurt = Date.now();
+
     this.requires('Actor').controllable(200).color('red').size(48, 48);
 
     // fourway seems to take Z and ignore the numeric keypad. Use X, C, and V
@@ -64,7 +67,17 @@ Crafty.c('Player', {
     });
 
     this.collideWith('Tree');
-    this.collideWith('Monster');
+    this.collideWith('Monster', function() {
+      var now = Date.now();
+      if (now - self.lastHurt >= 1000) { // 1s or more ago?
+        self.hp -= 5;
+        self.lastHurt = now;
+      }
+      self.refresh();
+    });
+
+    this.text = Crafty.e('Actor, Text2').color('red');
+    this.refresh();
 
     // Keep track of direction
     this.bind('NewDirection', function(dir) {
@@ -80,5 +93,13 @@ Crafty.c('Player', {
         self.direction = 'down';
       }
     });
+
+    this.bind('Moved', function() {
+      this.text.attr({ x: this.attr('x'), y: this.attr('y') });
+    })
+  },
+
+  refresh: function() {
+    this.text.text(this.hp);
   }
 })

@@ -11,7 +11,6 @@ Crafty.c('Monster', {
     // List of things you can't intersect
     this.collideWith('Tree');
     this.collideWith('Monster');
-    this.collideWith('Player');
   },
 
   pickRandomSpot: function() {
