@@ -1,6 +1,6 @@
 Crafty.c('Sword', {
   init: function() {
-    this.requires('Actor').size(64, 16).color('#dddddd');
+    this.requires('Actor').size(56, 8).color('#dddddd');
 
     var self = this;
     var player = Crafty('Player');
@@ -57,7 +57,7 @@ Crafty.c('Player', {
     this.requires('Actor').controllable(200).color('red').size(48, 48);
 
     // fourway seems to take Z and ignore the numeric keypad. Use X, C, and V
-    this.keyPress('X', function() {
+    this.keyPress('NUMPAD_1', function() {
       // Assume right for testing
       self.disableControl();
       Crafty.e('Sword');
