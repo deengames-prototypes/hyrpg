@@ -7,6 +7,7 @@ Crafty.c('Sword', {
     var myX;
     var myY;
     var endRotation;
+    this.z = player.z - 1;
 
     this.resetMonsterIsHit();
 
@@ -14,24 +15,24 @@ Crafty.c('Sword', {
       if (player.direction == 'right') {
         this.origin('middle left');
         myX = player.attr('x') + player.attr('w');
-        this.rotation = -45;
-        endRotation = 45;
+        this.rotation = -30;
+        endRotation = 30;
       } else if (player.direction == 'left') {
         this.origin('middle right');
         myX = player.attr('x') - this.attr('w');
-        this.rotation = -45;
-        endRotation = 45;
+        this.rotation = -30;
+        endRotation = 30;
       }
       this.move(myX, player.attr('y') + (player.attr('h') / 2));
     } else {
       if (player.direction == 'down') {
         this.origin(0, this.attr('h') / 2);
-        myY = player.attr('y') + player.attr('h');
+        myY = player.attr('y') + 0.75 * player.attr('h');
         this.rotation = 45;
         endRotation = 135;
       } else if (player.direction == 'up') {
         this.origin(0, this.attr('h') / 2);
-        myY = player.attr('y');
+        myY = player.attr('y') + player.attr('h') / 4;
         this.rotation = -135;
         endRotation = -45;
       }
@@ -76,7 +77,7 @@ Crafty.c('Player', {
     this.hp = 50;
     this.lastHurt = Date.now();
 
-    this.requires('Actor').controllable(200).color('red').size(48, 48);
+    this.requires('Actor').controllable(200).color('red').size(32, 48);
 
     // fourway seems to take Z and ignore the numeric keypad. Use X, C, and V
     this.keyPress('NUMPAD_1', function() {
