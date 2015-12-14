@@ -8,6 +8,8 @@ Crafty.c('Sword', {
     var myY;
     var endRotation;
 
+    this.resetMonsterIsHit();
+
     if (player.direction == 'left' || player.direction == 'right') {
       if (player.direction == 'right') {
         this.origin('middle left');
@@ -38,6 +40,8 @@ Crafty.c('Sword', {
 
     this.tween({ rotation: endRotation }, 0.25);
     this.one('TweenEnd', function() {
+      self.resetMonsterIsHit();
+
       Crafty('Player').enableControl();
       self.die();
     });
@@ -45,9 +49,24 @@ Crafty.c('Sword', {
     this.collide('Monster', function(monsters) {
       for (var i = 0; i < monsters.length; i++) {
         var monster = monsters[i].obj;
-        monster.die();
+        // This happens multiple times per frame. monster.getHurt remembers,
+        // then resets "was I hit this swing" flag when the sword dies.
+        if (!monster.isHitThisAttack) {
+          monster.getHurt(20);
+          monster.isHitThisAttack = true;
+        }
       }
     })
+  },
+
+  resetMonsterIsHit: function() {
+    var monsters = Crafty('Monster');
+    for (var i = 0; i < monsters.length; i++) {
+      // Got the ID
+      var id = monsters[i];
+      var monster = Crafty(id);
+      monster.isHitThisAttack = false;
+    }
   }
 });
 
@@ -61,9 +80,10 @@ Crafty.c('Player', {
 
     // fourway seems to take Z and ignore the numeric keypad. Use X, C, and V
     this.keyPress('NUMPAD_1', function() {
-      // Assume right for testing
-      self.disableControl();
-      Crafty.e('Sword');
+      if (Crafty('Sword').length == 0) {
+        self.disableControl();
+        Crafty.e('Sword');
+      }
     });
 
     this.collideWith('Tree');
