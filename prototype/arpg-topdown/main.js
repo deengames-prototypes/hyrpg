@@ -14,7 +14,7 @@ Game = {
 
     Crafty.e('Slime');
 
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 5; i++) {
       Crafty.e('Tree');
     }
   }
@@ -24,7 +24,9 @@ window.addEventListener('load', Game.start);
 
 Crafty.c('Tree', {
   init: function() {
-    this.requires('Actor').color('#884400').size(24, 24)
+    this.requires('Actor').color('#884400').size(24, 72)
       .move(randomBetween(0, Game.width), randomBetween(0, Game.height));
+
+    Crafty.e('Actor').color("#448844").size(72, 24).move(this.attr('x') - 24, this.attr('y'));
   }
 });
