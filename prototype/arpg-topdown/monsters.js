@@ -10,9 +10,20 @@ Crafty.c('Monster', {
     this.move(x, y);
 
     this.bind('EnterFrame', function() {
+      var old = { x: this.attr("x"), y: this.attr("y") };
       this.moveTowardDestination();
+      var curr = { x: this.attr("x"), y: this.attr("y") };
+
       this.text.attr("x", this.attr("x"));
       this.text.attr("y", this.attr("y"));
+
+      // magnitudes
+      var mags = { x: Math.abs(curr.x - old.x), y: Math.abs(curr.y - old.y) };
+      if (mags.x >= mags.y) {
+        this.facing = mags.x > 0 ? 'right' : 'left';
+      } else {
+        this.facing = mags.y > 0 ? 'down' : 'up';
+      }
     });
 
     // List of things you can't intersect
@@ -70,7 +81,7 @@ Crafty.c('Monster', {
 
 Crafty.c('Sheep', {
   init: function() {
-    this.requires('Monster').size(32, 32).color('white');
+    this.requires('Monster').size(32, 24).color('white');
     this.moveStep = 5;
     this.health(20);
     var self = this;
@@ -100,6 +111,12 @@ Crafty.c('Sheep', {
       }
 
       self.moveTowardDestination();
+
+      if (self.facing == 'left' || self.facing == 'right') {
+        self.size(32, 24);
+      } else {
+        self.size(24, 32);
+      }
     });
   }
 });
@@ -107,7 +124,7 @@ Crafty.c('Sheep', {
 Crafty.c('Slime', {
   init: function() {
     this.requires('Monster').size(48, 48).color('#88ff88');
-    this.moveStep = 3;
+    this.moveStep = 2;
     var self = this;
     this.health(50);
 
