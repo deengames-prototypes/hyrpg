@@ -16,12 +16,12 @@ Crafty.c('Sword', {
         this.origin('middle left');
         myX = player.attr('x') + player.attr('w');
         this.rotation = -30;
-        endRotation = 30;
+        this.endRotation = 30;
       } else if (player.direction == 'left') {
         this.origin('middle right');
         myX = player.attr('x') - this.attr('w');
         this.rotation = -30;
-        endRotation = 30;
+        this.endRotation = 30;
       }
       this.move(myX, player.attr('y') + (player.attr('h') / 2));
     } else {
@@ -29,23 +29,25 @@ Crafty.c('Sword', {
         this.origin(0, this.attr('h') / 2);
         myY = player.attr('y') + 0.75 * player.attr('h');
         this.rotation = 45;
-        endRotation = 135;
+        this.endRotation = 135;
       } else if (player.direction == 'up') {
         this.origin(0, this.attr('h') / 2);
         myY = player.attr('y') + player.attr('h') / 4;
         this.rotation = -135;
-        endRotation = -45;
+        this.endRotation = -45;
       }
       this.move(player.attr('x') + (player.attr('w') / 2), myY);
     }
 
-    this.tween({ rotation: endRotation }, 0.25);
     this.one('TweenEnd', function() {
       self.resetMonsterIsHit();
-
       Crafty('Player').enableControl();
       self.die();
     });
+  },
+
+  attack: function(attack) {
+    this.tween({ rotation: this.endRotation }, attack.delay);
 
     this.collide('Monster', function(monsters) {
       for (var i = 0; i < monsters.length; i++) {
@@ -53,7 +55,7 @@ Crafty.c('Sword', {
         // This happens multiple times per frame. monster.getHurt remembers,
         // then resets "was I hit this swing" flag when the sword dies.
         if (!monster.isHitThisAttack) {
-          monster.getHurt(20);
+          monster.getHurt(attack.damage);
           monster.isHitThisAttack = true;
         }
       }
@@ -79,13 +81,16 @@ Crafty.c('Player', {
 
     this.requires('Actor').controllable(200).color('red').size(32, 48);
 
-    // fourway seems to take Z and ignore the numeric keypad. Use X, C, and V
     this.keyPress('NUMPAD_1', function() {
-      if (Crafty('Sword').length == 0) {
-        self.disableControl();
-        Crafty.e('Sword');
-      }
+      self.attack(extern('attacks')[0]);
     });
+    this.keyPress('NUMPAD_2', function() {
+      self.attack(extern('attacks')[1]);
+    });
+    this.keyPress('NUMPAD_3', function() {
+      self.attack(extern('attacks')[2]);
+    });
+
 
     this.collideWith('Tree');
     this.collideWith('Monster', function() {
@@ -118,6 +123,13 @@ Crafty.c('Player', {
     this.bind('Moved', function() {
       this.text.attr({ x: this.attr('x'), y: this.attr('y') });
     })
+  },
+
+  attack: function(attack) {
+    if (Crafty('Sword').length == 0) {
+      this.disableControl();
+      Crafty.e('Sword').attack(attack);
+    }
   },
 
   hurt: function(damage) {

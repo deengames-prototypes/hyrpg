@@ -1,0 +1,7 @@
+externs = {
+  "attacks": [
+    { "delay": 0.15, "damage": 8},
+    { "delay": 0.25, "damage": 13},
+    { "delay": 0.40, "damage": 20},
+  ]
+}
