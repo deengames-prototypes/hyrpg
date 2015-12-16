@@ -147,6 +147,12 @@ Crafty.c('Player', {
       this.die();
       Crafty.e('Actor, Text2').fontSize(72).text("GAME OVER!");
     }
+
+    var sword = Crafty('Sword');
+    if (sword.length > 0) {
+      sword.die();
+      Crafty('StatusBar').showMessage("Attack interrupted!");
+    }
   },
 
   refresh: function() {
