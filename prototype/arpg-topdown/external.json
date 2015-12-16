@@ -3,5 +3,12 @@ externs = {
     { "delay": 0.15, "damage": 8},
     { "delay": 0.25, "damage": 13},
     { "delay": 0.40, "damage": 20},
-  ]
+  ],
+  "combos": [
+    // Currently, damage here is just more than the sum of individual attacks
+    // So when it's all done, you get ~2x damage for executing a combo.
+    { "name": "one-two", "moves": "112", "damage": 40 },
+    { "name": "steel fist", "moves": "23", "damage": 35 },
+    { "name": "sucker punch", "moves": "213", "damage": 50 }
+  ],
 }

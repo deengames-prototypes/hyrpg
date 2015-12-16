@@ -126,7 +126,7 @@ Crafty.c('Slime', {
     this.requires('Monster').size(48, 48).color('#88ff88');
     this.moveStep = 2;
     var self = this;
-    this.health(50);
+    this.health(100);
 
     this.repeatedly(randomBetween(3, 5), function() {
       if (self.destination == null) {

@@ -6,6 +6,8 @@ Game = {
     Crafty.init(Game.width, Game.height);
     Crafty.background('grey');
     Crafty.e('Player');
+    Crafty.e('ComboWatcher');
+    Crafty.e('StatusBar');
 
     var numMonsters = randomBetween(3, 5);
     for (var i = 0; i < numMonsters; i++) {
@@ -28,5 +30,19 @@ Crafty.c('Tree', {
       .move(randomBetween(0, Game.width), randomBetween(0, Game.height));
 
     Crafty.e('Actor').color("#448844").size(72, 24).move(this.attr('x') - 24, this.attr('y'));
+  }
+});
+
+Crafty.c('StatusBar', {
+  init: function() {
+    this.requires('Actor, Text2').size(800, 32).color('grey');
+  },
+
+  showMessage: function(text) {
+    this.text(text);
+  },
+
+  clear: function() {
+    this.text('');
   }
 });

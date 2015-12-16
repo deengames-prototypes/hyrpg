@@ -8,6 +8,7 @@ Crafty.c('Sword', {
     var myY;
     var endRotation;
     this.z = player.z - 1;
+    Crafty('StatusBar').clear();
 
     this.resetMonsterIsHit();
 
@@ -46,9 +47,12 @@ Crafty.c('Sword', {
     });
   },
 
-  attack: function(attack) {
+  attack: function(key, attack) {
     this.tween({ rotation: this.endRotation }, attack.delay);
 
+    var combo = Crafty('ComboWatcher').attack(key);
+    // Technically, the combo should always execute (whether you land a hit or not).
+    // But, since there's no animation, etc. we're okay just executing it on hit.
     this.collide('Monster', function(monsters) {
       for (var i = 0; i < monsters.length; i++) {
         var monster = monsters[i].obj;
@@ -57,6 +61,10 @@ Crafty.c('Sword', {
         if (!monster.isHitThisAttack) {
           monster.getHurt(attack.damage);
           monster.isHitThisAttack = true;
+          if (combo != null) {
+            monster.getHurt(combo.damage);
+            Crafty('StatusBar').showMessage('Executed ' + combo.name + ' for an additional ' + combo.damage + ' damage!')
+          }
         }
       }
     })
@@ -82,13 +90,13 @@ Crafty.c('Player', {
     this.requires('Actor').controllable(200).color('red').size(32, 48);
 
     this.keyPress('NUMPAD_1', function() {
-      self.attack(extern('attacks')[0]);
+      self.attack('1', extern('attacks')[0]);
     });
     this.keyPress('NUMPAD_2', function() {
-      self.attack(extern('attacks')[1]);
+      self.attack('2', extern('attacks')[1]);
     });
     this.keyPress('NUMPAD_3', function() {
-      self.attack(extern('attacks')[2]);
+      self.attack('3', extern('attacks')[2]);
     });
 
 
@@ -125,10 +133,10 @@ Crafty.c('Player', {
     })
   },
 
-  attack: function(attack) {
+  attack: function(key, attack) {
     if (Crafty('Sword').length == 0) {
       this.disableControl();
-      Crafty.e('Sword').attack(attack);
+      Crafty.e('Sword').attack(key, attack);
     }
   },
 
@@ -144,4 +152,29 @@ Crafty.c('Player', {
   refresh: function() {
     this.text.text(this.hp);
   }
-})
+});
+
+Crafty.c('ComboWatcher', {
+  init: function() {
+    this.queue = '';
+  },
+
+  // Note that an attack executed. Returns the combo (if there was one) or null
+  // (if we didn't execute a combo). Note that this mutates state.
+  attack: function(key) {
+    this.queue += key;
+
+    var combos = extern('combos');
+    // TODO: order shouldn't matter. If the keys match more than one combo, we
+    // should really pick the best, eh?
+    for (var i = 0; i < combos.length; i++) {
+      var combo = combos[i];
+      if (this.queue.endsWith(combo.moves)) {
+        this.queue = '';
+        return combo;
+      }
+    }
+
+    return null;
+  }
+});
