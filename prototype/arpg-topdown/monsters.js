@@ -148,3 +148,56 @@ Crafty.c('Slime', {
     });
   }
 });
+
+Crafty.c('Archer', {
+  init: function() {
+    this.requires('Monster').size(16, 32).color('#4488bb');
+    this.moveStep = 2;
+    var self = this;
+    this.lastFired = new Date();
+    this.health(50);
+
+    this.bind('EnterFrame', function() {
+      var p = Crafty('Player');
+
+      // Vector pointing from player to us
+      var vAwayFromPlayer = { x: self.attr('x') - p.attr('x'), y: self.attr('y') - p.attr('y') };
+      var d = Math.abs(vAwayFromPlayer.x) + Math.abs(vAwayFromPlayer.y);
+      var now = new Date();
+
+      if (d <= 100)
+      {
+        self.destination = { x: self.attr('x') + d.x, y: self.attr('y') + d.y };
+        self.moveTowardDestination();
+      } else if (now.valueOf() - self.lastFired.valueOf() > 1000) {
+        // 1s delay since we last shot at the player
+        // Normalize the vector to the player. We always shoot at a constant velocity.
+        var magnitude = Math.abs(vAwayFromPlayer.x) + Math.abs(vAwayFromPlayer.y);
+        var vx = -vAwayFromPlayer.x / magnitude;
+        var vy = -vAwayFromPlayer.y / magnitude;
+        Crafty.e('Projectile').move(self.x, self.y).velocity(vx * 10, vy * 10);
+        self.lastFired = now;
+      }
+    });
+  }
+});
+
+Crafty.c('Projectile', {
+  init: function() {
+    this.requires('Actor').size(8, 8).color('red');
+    var self = this;
+
+    this.collide('Player', function() {
+      Crafty('Player').hurt(5);
+      self.die();
+    });
+
+    this.collide('Tree', function() {
+      self.die();
+    });
+
+    this.collide('Sword', function() {
+      self.die();
+    })
+  }
+});

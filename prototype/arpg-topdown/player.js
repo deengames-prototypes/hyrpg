@@ -107,7 +107,6 @@ Crafty.c('Player', {
         self.hurt(5);
         self.lastHurt = now;
       }
-      self.refresh();
     });
 
     this.text = Crafty.e('Actor, Text2').color('red');
@@ -153,6 +152,8 @@ Crafty.c('Player', {
       sword.die();
       Crafty('StatusBar').showMessage("Attack interrupted!");
     }
+
+    this.refresh();    
   },
 
   refresh: function() {

@@ -15,6 +15,7 @@ Game = {
     }
 
     Crafty.e('Slime');
+    Crafty.e('Archer');
 
     for (var i = 0; i < 5; i++) {
       Crafty.e('Tree');
