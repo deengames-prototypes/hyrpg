@@ -99,7 +99,6 @@ Crafty.c('Player', {
       self.attack('3', extern('attacks')[2]);
     });
 
-
     this.collideWith('Tree');
     this.collideWith('Wall');
     this.collideWith('Bush');
