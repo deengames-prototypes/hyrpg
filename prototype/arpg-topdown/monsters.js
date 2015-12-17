@@ -29,6 +29,7 @@ Crafty.c('Monster', {
     // List of things you can't intersect
     this.collideWith('Tree');
     this.collideWith('Monster');
+    this.collideWith('Wall');
   },
 
 
@@ -75,6 +76,10 @@ Crafty.c('Monster', {
     if (this.currentHealth <= 0) {
       this.die();
       this.text.die();
+
+      if (Crafty('Monster').length == 0) {
+        Crafty.e('Actor, Text2').fontSize(72).text("YOU WIN!").move(-Crafty.viewport.x, -Crafty.viewport.y);
+      }
     }
   }
 });
@@ -167,11 +172,13 @@ Crafty.c('Archer', {
       var d = Math.abs(vAwayFromPlayer.x) + Math.abs(vAwayFromPlayer.y);
       var now = new Date();
 
-      if (d <= 100)
+      if (d <= 150)
       {
-        self.destination = { x: self.attr('x') + d.x, y: self.attr('y') + d.y };
+        self.destination = { x: self.attr('x') + vAwayFromPlayer.x, y: self.attr('y') + vAwayFromPlayer.y };
         self.moveTowardDestination();
-      } else if (now.valueOf() - self.lastFired.valueOf() > 1000) {
+      }
+
+      if (now.valueOf() - self.lastFired.valueOf() > 1000) {
         // 1s delay since we last shot at the player
         // Normalize the vector to the player. We always shoot at a constant velocity.
         var magnitude = Math.abs(vAwayFromPlayer.x) + Math.abs(vAwayFromPlayer.y);
