@@ -101,10 +101,11 @@ Crafty.c('Player', {
 
 
     this.collideWith('Tree');
-    this.collideWith('Monster', function() {
+    this.collideWith('Wall');
+    this.collideWith('Monster', function(m) {
       var now = Date.now();
       if (now - self.lastHurt >= 1000) { // 1s or more ago?
-        self.hurt(5);
+        self.hurt(m.obj.damage);
         self.lastHurt = now;
       }
     });
@@ -144,16 +145,17 @@ Crafty.c('Player', {
     this.hp = Math.max(0, this.hp);
     if (this.hp == 0) {
       this.die();
-      Crafty.e('Actor, Text2').fontSize(72).text("GAME OVER!");
+      Crafty.e('Actor, Text2').fontSize(72).text("GAME OVER!").move(-Crafty.viewport.x, -Crafty.viewport.y);
     }
 
     var sword = Crafty('Sword');
     if (sword.length > 0) {
       sword.die();
+      this.enableControl();
       Crafty('StatusBar').showMessage("Attack interrupted!");
     }
 
-    this.refresh();    
+    this.refresh();
   },
 
   refresh: function() {

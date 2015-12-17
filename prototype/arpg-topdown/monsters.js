@@ -84,6 +84,7 @@ Crafty.c('Sheep', {
     this.requires('Monster').size(32, 24).color('white');
     this.moveStep = 5;
     this.health(20);
+    this.damage = extern('damage').sheep;
     var self = this;
 
     this.repeatedly(randomBetween(3, 5), function() {
@@ -127,6 +128,7 @@ Crafty.c('Slime', {
     this.moveStep = 2;
     var self = this;
     this.health(100);
+    this.damage = extern('damage').slime;
 
     this.repeatedly(randomBetween(3, 5), function() {
       if (self.destination == null) {
@@ -188,7 +190,7 @@ Crafty.c('Projectile', {
     var self = this;
 
     this.collide('Player', function() {
-      Crafty('Player').hurt(5);
+      Crafty('Player').hurt(extern("damage").archer);
       self.die();
     });
 

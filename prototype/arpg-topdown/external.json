@@ -11,4 +11,9 @@ externs = {
     { "name": "steel fist", "moves": "23", "damage": 35 },
     { "name": "sucker punch", "moves": "213", "damage": 50 }
   ],
+  "damage": {
+    "sheep": 5,
+    "slime": 10,
+    "archer": 3
+  }
 }
