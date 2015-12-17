@@ -13,15 +13,14 @@ Game = {
     Crafty.e('ComboWatcher');
     Crafty.e('StatusBar');
 
-    var numMonsters = randomBetween(6, 10);
-    for (var i = 0; i < numMonsters; i++) {
+    var numSheep = randomBetween(6, 10);
+    for (var i = 0; i < numSheep; i++) {
       Crafty.e('Sheep');
     }
-
     Crafty.e('Slime');
     Crafty.e('Slime');
-
     Crafty.e('Archer');
+
     var numTrees = randomBetween(10, 15);
     var numBushes = randomBetween(5, 10);
 

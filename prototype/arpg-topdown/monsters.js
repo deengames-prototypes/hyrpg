@@ -3,7 +3,6 @@ Crafty.c('Monster', {
     var self = this;
     this.text = Crafty.e('Text2');
     this.damage = 0;
-
     this.moveStep = 1;
     this.requires('Actor');
     var x = randomBetween(0, Game.width - this.attr('w'));
@@ -89,10 +88,12 @@ Crafty.c('Monster', {
 Crafty.c('Sheep', {
   init: function() {
     this.requires('Monster').size(32, 24).color('white');
-    this.moveStep = 5;
+    this.moveStep = 1;
     this.health(20);
     this.damage = extern('damage').sheep;
     var self = this;
+    this.lastCharge = new Date();
+    this.isCharging = false;
 
     this.repeatedly(randomBetween(3, 5), function() {
       if (!this.isCharging) {
@@ -103,18 +104,21 @@ Crafty.c('Sheep', {
     this.bind('EnterFrame', function() {
       var p = Crafty('Player');
       var d = Math.abs(self.attr('x') - p.attr('x')) + Math.abs(self.attr('y') - p.attr('y'));
+      var now = new Date();
 
-      if (!self.isCharging && d <= 200)
+      // Don't charge within 2s of the last charge. Prevents constant charging.
+      if (!self.isCharging && d <= 200 && (now.valueOf() - self.lastCharge.valueOf()) >= 2000)
       {
         self.destination = { x: p.x, y: p.y };
         self.isCharging = true;
-        this.moveStep = 1;
+        self.lastCharge = now;
+        this.moveStep = 2;
         this.color('yellow');
       } else if (self.isCharging && self.destination != null && Math.abs(self.attr('x') - self.destination.x) +
-        Math.abs(self.attr('y') - self.destination.y) <= 10) { // reached destination
+        Math.abs(self.attr('y') - self.destination.y) <= self.moveStep) { // reached destination
         self.destination = null;
         self.isCharging = false;
-        this.moveStep = 5;
+        this.moveStep = 1;
         this.color('white');
       }
 
