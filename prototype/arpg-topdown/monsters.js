@@ -2,6 +2,7 @@ Crafty.c('Monster', {
   init: function() {
     var self = this;
     this.text = Crafty.e('Text2');
+    this.damage = 0;
 
     this.moveStep = 1;
     this.requires('Actor');
