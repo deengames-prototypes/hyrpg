@@ -30,6 +30,7 @@ Crafty.c('Monster', {
     this.collideWith('Tree');
     this.collideWith('Monster');
     this.collideWith('Wall');
+    this.collideWith('Bush');
   },
 
 

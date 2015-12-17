@@ -102,6 +102,8 @@ Crafty.c('Player', {
 
     this.collideWith('Tree');
     this.collideWith('Wall');
+    this.collideWith('Bush');
+
     this.collideWith('Monster', function(m) {
       var now = Date.now();
       if (now - self.lastHurt >= 1000) { // 1s or more ago?

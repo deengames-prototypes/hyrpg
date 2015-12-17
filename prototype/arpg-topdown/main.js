@@ -22,9 +22,15 @@ Game = {
     Crafty.e('Slime');
 
     Crafty.e('Archer');
+    var numTrees = randomBetween(10, 15);
+    var numBushes = randomBetween(5, 10);
 
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < numTrees; i++) {
       Crafty.e('Tree');
+    }
+
+    for (var i = 0; i < numBushes; i++) {
+      Crafty.e('Bush');
     }
 
     Crafty.e('Wall').size(Game.width, 4);
@@ -42,6 +48,17 @@ Crafty.c('Tree', {
       .move(randomBetween(0, Game.width), randomBetween(0, Game.height));
 
     Crafty.e('Actor').color("#448844").size(72, 24).move(this.attr('x') - 24, this.attr('y'));
+  }
+});
+
+Crafty.c('Bush', {
+  init: function() {
+    var self = this;
+    this.requires('Actor').color('#88FF44').size(32, 32)
+      .move(randomBetween(0, Game.width), randomBetween(0, Game.height))
+      .collide('Sword', function() {
+        self.die();
+      })
   }
 });
 
