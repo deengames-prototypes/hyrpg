@@ -31,6 +31,12 @@ Game = {
     for (var i = 0; i < numBushes; i++) {
       Crafty.e('Bush');
     }
+
+    var wallThickness = 4;
+    Crafty.e('Wall').size(Game.width, wallThickness);
+    Crafty.e('Wall').size(Game.width, wallThickness).move(0, Game.height - wallThickness);
+    Crafty.e('Wall').size(wallThickness, Game.height);
+    Crafty.e('Wall').size(wallThickness, Game.height).move(Game.width - wallThickness, 0);
   }
 }
 
