@@ -31,11 +31,6 @@ Game = {
     for (var i = 0; i < numBushes; i++) {
       Crafty.e('Bush');
     }
-
-    Crafty.e('Wall').size(Game.width, 4);
-    Crafty.e('Wall').size(Game.width, 4).move(0, Game.height - 4);
-    Crafty.e('Wall').size(4, Game.height);
-    Crafty.e('Wall').size(4, Game.height).move(Game.width - 4, 0);
   }
 }
 
