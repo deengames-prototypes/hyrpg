@@ -103,13 +103,7 @@ Crafty.c('Player', {
     this.collideWith('Wall');
     this.collideWith('Bush');
 
-    this.collideWith('Monster', function(m) {
-      var now = Date.now();
-      if (now - self.lastHurt >= 1000) { // 1s or more ago?
-        self.hurt(m.obj.damage);
-        self.lastHurt = now;
-      }
-    });
+    this.collideWith('Monster');
 
     this.text = Crafty.e('Actor, Text2').color('red');
     this.refresh();
@@ -138,6 +132,14 @@ Crafty.c('Player', {
     if (Crafty('Sword').length == 0) {
       this.disableControl();
       Crafty.e('Sword').attack(key, attack);
+    }
+  },
+
+  monsterTouch: function(monster) {
+    var now = Date.now();
+    if (now - this.lastHurt >= 1000) { // 1s or more ago?
+      this.hurt(monster.damage);
+      this.lastHurt = now;
     }
   },
 

@@ -30,6 +30,12 @@ Crafty.c('Monster', {
     this.collideWith('Tree');
     this.collideWith('Monster');
     this.collideWith('Wall');
+    this.collideWith('Player', function(data) {
+      var p = data.obj;
+      p.attr('x', p.attr('x') + data.normal.x * data.overlap);
+      p.attr('y', p.attr('y') + data.normal.y * data.overlap);
+      p.monsterTouch(self);
+    });
     this.collideWith('Bush');
   },
 
