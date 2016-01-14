@@ -1,9 +1,8 @@
 # Hyrpg
 
 
-A procedural, action-RPG.
+A fully procedurally-generated, ten-hour long RPG in the vein of Chrono Trigger and similar SNES-era RPGs.
 
-- **Procedural:** Each game is different an exciting!
-- **Customizable:** Choose only the RPG features you want!
+This is currently one of several games in a suite of procedurally-generated games (this being one of the more complex). For starters, you may want to look at other games that build up to this:
 
-[Hybrid-RPG Prototype](http://ashes999.github.io/prototype) 
+- [Arena](http://github.com/ashes999/arena)
