@@ -11,9 +11,8 @@ import flixel.input.keyboard.FlxKeyboard;
  * A FlxState which can be used for the game's menu.
  */
 class CreateGameState extends FlxState
-{
-    // 2^31 - 1
-    private static var MAX_SEED:Int = 2147483647;
+{    
+    private static var MAX_SEED:Int = 1000000000; // 1B
 	/**
 	 * Function that is called up when to state is created to set it up.
 	 */
