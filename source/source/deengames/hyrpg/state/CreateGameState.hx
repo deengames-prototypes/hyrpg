@@ -5,22 +5,22 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
 import flixel.util.FlxColor;
-import flixel.plugin.MouseEventManager;
 import flixel.input.keyboard.FlxKeyboard;
 /**
  * A FlxState which can be used for the game's menu.
  */
 class CreateGameState extends FlxState
 {
+    // 2^31 - 1
+    private static var MAX_SEED:Int = 2147483647;
 	/**
 	 * Function that is called up when to state is created to set it up.
 	 */
 	override public function create():Void
 	{
-		Reg.worldSeed:Int = Std.random(4300000000); // 4.3B => ~2^32
-		var text:FlxText = new FlxText(0, 0, 0, "World Universe #" + Reg.worldSeed);
+		Reg.worldSeed = Std.random(MAX_SEED);
+		var text:FlxText = new FlxText(0, 0, 0, 'World Universe #${Reg.worldSeed}');
 		text.setFormat('assets/fonts/OpenSans-Regular.ttf', 72, FlxColor.WHITE);
 		add(text);
 		text.x = (FlxG.width - text.width) / 4;
@@ -41,10 +41,11 @@ class CreateGameState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
-		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed)
+		super.update(elapsed);
+        // Any key pressed or mouse clicked
+		if (FlxG.keys.firstJustPressed() > -1 || FlxG.mouse.justPressed)
         {
 			FlxG.switchState(new LocationMapState());
 		}

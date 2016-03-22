@@ -5,12 +5,9 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
 import flixel.util.FlxColor;
-import flixel.plugin.MouseEventManager;
-/**
- * A FlxState which can be used for the game's menu.
- */
+import flixel.input.keyboard.FlxKeyList;
+
 class TitleScreenState extends FlxState
 {
 	/**
@@ -37,10 +34,10 @@ class TitleScreenState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
-		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed)
+		super.update(elapsed);
+		if (FlxG.keys.firstJustPressed() > -1 || FlxG.mouse.justPressed)
         {
 			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, createGame);
 		}
