@@ -19,8 +19,8 @@ class CreateGameState extends FlxState
 	 */
 	override public function create():Void
 	{
-		var universeSeed:Int = 1; //Std.random(1000000);
-		var text:FlxText = new FlxText(0, 0, 0, "Universe #" + universeSeed);
+		Reg.worldSeed:Int = Std.random(4300000000); // 4.3B => ~2^32
+		var text:FlxText = new FlxText(0, 0, 0, "World Universe #" + Reg.worldSeed);
 		text.setFormat('assets/fonts/OpenSans-Regular.ttf', 72, FlxColor.WHITE);
 		add(text);
 		text.x = (FlxG.width - text.width) / 4;
@@ -44,7 +44,8 @@ class CreateGameState extends FlxState
 	override public function update():Void
 	{
 		super.update();
-		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed) {
+		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed)
+        {
 			FlxG.switchState(new LocationMapState());
 		}
 	}

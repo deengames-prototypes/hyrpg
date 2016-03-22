@@ -8,9 +8,7 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxMath;
 import flixel.util.FlxColor;
 import flixel.plugin.MouseEventManager;
-/**
- * A FlxState which can be used for the game's menu.
- */
+
 class LocationMapState extends FlxState
 {
 	private static inline var TILE_WIDTH = 32;
@@ -53,8 +51,7 @@ class LocationMapState extends FlxState
 			}
 		}
 
-		// TODO: determine which hero in world generation
-		player.loadGraphic("assets/images/map/hero-1.png", true, 32, 32);
+		player.loadGraphic("assets/images/map/hero.png", true, 32, 32);
 		player.animation.add('down', [0, 1, 2, 1], PLAYER_SPRITE_FPS, true);
 		player.animation.add('left', [3, 4, 5, 4], PLAYER_SPRITE_FPS, true);
 		player.animation.add('right', [6, 7, 8, 7], PLAYER_SPRITE_FPS, true);

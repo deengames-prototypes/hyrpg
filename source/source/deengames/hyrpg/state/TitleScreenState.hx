@@ -18,10 +18,10 @@ class TitleScreenState extends FlxState
 	 */
 	override public function create():Void
 	{
-    var sprite:FlxSprite = new FlxSprite(0, 0, 'assets/images/ui/title.png');
-    add(sprite);
-    sprite.x  = (FlxG.width - sprite.width) / 2;
-    sprite.y = (FlxG.height - sprite.height) / 2;
+        var sprite:FlxSprite = new FlxSprite(0, 0, 'assets/images/titlescreen.png');
+        add(sprite);
+        sprite.x  = (FlxG.width - sprite.width) / 2;
+        sprite.y = (FlxG.height - sprite.height) / 2;
 		super.create();
 	}
 
@@ -40,7 +40,8 @@ class TitleScreenState extends FlxState
 	override public function update():Void
 	{
 		super.update();
-		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed) {
+		if (FlxG.keys.firstJustPressed() != "" || FlxG.mouse.justPressed)
+        {
 			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, createGame);
 		}
 	}
