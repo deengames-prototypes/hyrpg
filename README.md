@@ -1,8 +1,5 @@
-# Hyrpg
+# Ibn Battah's Adventures
 
+A fully procedurally-generated RPG. You get a unique 4-5 hour RPG each time you play.
 
-A fully procedurally-generated, ten-hour, complete, quality RPG.
-
-This is currently one of several games in a suite of procedurally-generated games (this being one of the more complex). For starters, you may want to look at other games that build up to this:
-
-- [Arena](http://github.com/ashes999/arena)
+It follows the adventures of Ibn Battah, ecentric adventurer, and his pet rubber duck. 
