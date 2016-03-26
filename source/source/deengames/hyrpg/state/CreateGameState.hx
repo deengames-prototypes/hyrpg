@@ -19,11 +19,11 @@ class CreateGameState extends FlxState
 	override public function create():Void
 	{
 		Reg.worldSeed = Std.random(MAX_SEED);
-		var text:FlxText = new FlxText(0, 0, 0, 'World Universe #${Reg.worldSeed}');
+		var text:FlxText = new FlxText(0, 0, 0, 'World #${Reg.worldSeed}');
 		text.setFormat('assets/fonts/OpenSans-Regular.ttf', 72, FlxColor.WHITE);
 		add(text);
-		text.x = (FlxG.width - text.width) / 4;
-		text.y = (FlxG.height - text.height) / 3;
+		text.x = (FlxG.width - text.width) / 2;
+		text.y = (FlxG.height - text.height) / 2;
 
 		super.create();
 	}
