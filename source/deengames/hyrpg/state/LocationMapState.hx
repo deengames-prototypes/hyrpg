@@ -39,7 +39,8 @@ class LocationMapState extends FlxState
 				tile.y = y * TILE_HEIGHT;
 				var tileType:Int = TILE_GRASS;
 
-				if (x == 0 || x == horizontalTiles - 1 || y == 0 || y == verticalTiles - 1) {
+				if (x == 0 || x == horizontalTiles - 1 || y == 0 || y == verticalTiles - 1)
+                {
 					tileType = TILE_WALL;
 				}
 
