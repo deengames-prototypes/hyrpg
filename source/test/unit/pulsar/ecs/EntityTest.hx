@@ -5,6 +5,7 @@ import pulsar.ecs.Component;
 import pulsar.ecs.Entity;
 import pulsar.ecs.EventBus;
 
+@:access(pulsar.ecs.EventBus)
 class EntityTest
 {
     @Test
@@ -42,7 +43,7 @@ class EntityTest
     {
         var bus:EventBus = EventBus.getInstance();
         var e = new Entity();
-        Assert.isTrue(bus.has(e));
+        Assert.isTrue(bus.entities.indexOf(e) > -1);
     }
     
     // Mostly a duplicate of the EventBus broadcast test
