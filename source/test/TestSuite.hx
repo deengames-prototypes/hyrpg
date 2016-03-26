@@ -1,6 +1,8 @@
 import massive.munit.TestSuite;
 
 import unit.pulsar.ecs.EntityTest;
+import unit.pulsar.ecs.EventBusTest;
+import unit.pulsar.ecs.ComponentTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -15,5 +17,7 @@ class TestSuite extends massive.munit.TestSuite
 		super();
 
 		add(unit.pulsar.ecs.EntityTest);
+		add(unit.pulsar.ecs.EventBusTest);
+		add(unit.pulsar.ecs.ComponentTest);
 	}
 }
