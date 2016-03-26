@@ -3,7 +3,6 @@ package pulsar.ecs;
 class Entity
 {
     // TODO: add method to receive an event and call a function
-    
     // I don't have enough understanding on the type system and reflection to make this work
     // with types. For now, the key is just the class name, and the type is dynamic.
     //private var components = new Map<Class<Component>, Component>();
