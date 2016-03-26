@@ -1,4 +1,4 @@
-package deengames.hyrpg.state;
+package deengames.ibnbattah.state;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -6,20 +6,16 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
-import flixel.input.keyboard.FlxKeyboard;
-/**
- * A FlxState which can be used for the game's menu.
- */
-class CreateGameState extends FlxState
-{    
-    private static var MAX_SEED:Int = 1000000000; // 1B
+import flixel.input.keyboard.FlxKeyList;
+
+class TitleScreenState extends FlxState
+{
 	/**
 	 * Function that is called up when to state is created to set it up.
 	 */
 	override public function create():Void
 	{
-		Reg.worldSeed = Std.random(MAX_SEED);
-		var text:FlxText = new FlxText(0, 0, 0, 'World #${Reg.worldSeed}');
+        var text:FlxText = new FlxText(0, 0, 0, 'Ibn Battah\'s Adventures');
 		text.setFormat('assets/fonts/OpenSans-Regular.ttf', 72, FlxColor.WHITE);
 		add(text);
 		text.x = (FlxG.width - text.width) / 2;
@@ -43,10 +39,14 @@ class CreateGameState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-        // Any key pressed or mouse clicked
 		if (FlxG.keys.firstJustPressed() > -1 || FlxG.mouse.justPressed)
         {
-			FlxG.switchState(new LocationMapState());
+			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, createGame);
 		}
+	}
+
+	private function createGame() : Void
+	{
+		FlxG.switchState(new deengames.ibnbattah.state.CreateGameState());
 	}
 }

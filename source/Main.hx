@@ -1,6 +1,6 @@
 package;
 
-import deengames.hyrpg.state.TitleScreenState;
+import deengames.ibnbattah.state.TitleScreenState;
 
 import flash.display.Sprite;
 import flash.display.StageAlign;

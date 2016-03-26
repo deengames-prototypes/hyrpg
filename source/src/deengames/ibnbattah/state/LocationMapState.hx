@@ -1,4 +1,4 @@
-package deengames.hyrpg.state;
+package deengames.ibnbattah.state;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
