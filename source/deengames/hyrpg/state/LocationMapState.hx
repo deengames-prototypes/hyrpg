@@ -19,7 +19,6 @@ class LocationMapState extends FlxState
 	private static inline var TILE_GRASS = 0;
 	private static inline var TILE_WALL = 1;
 
-	private static inline var PLAYER_SPRITE_FPS = 8;
 	private static inline var PLAYER_SPEED = 250;
 
 	private var player:FlxSprite = new FlxSprite();
@@ -49,15 +48,7 @@ class LocationMapState extends FlxState
 			}
 		}
 
-		player.loadGraphic("assets/images/map/hero.png", true, 32, 32);
-		player.animation.add('down', [0, 1, 2, 1], PLAYER_SPRITE_FPS, true);
-		player.animation.add('left', [3, 4, 5, 4], PLAYER_SPRITE_FPS, true);
-		player.animation.add('right', [6, 7, 8, 7], PLAYER_SPRITE_FPS, true);
-		player.animation.add('up', [9, 10, 11, 10], PLAYER_SPRITE_FPS, true);
-		player.animation.play('loop');
-		player.x = FlxG.width / 2;
-		player.y = FlxG.height / 2;
-		player.animation.play('down');
+		player.loadGraphic("assets/images/map/hero.png");
 		add(player);
 
 		super.create();
@@ -83,14 +74,14 @@ class LocationMapState extends FlxState
 		{
 			player.velocity.set(player.velocity.x, -PLAYER_SPEED);
 			anythingPressed = true;
-			player.animation.play('up');
 		}
 		else if (FlxG.keys.pressed.DOWN)
 		{
 			player.velocity.set(player.velocity.x, PLAYER_SPEED);
 			anythingPressed = true;
-			player.animation.play('down');
-		} else {
+		}
+        else
+        {
 			player.velocity.set(player.velocity.x, 0);
 		}
 
@@ -98,22 +89,20 @@ class LocationMapState extends FlxState
 		{
 			player.velocity.set(-PLAYER_SPEED, player.velocity.y);
 			anythingPressed = true;
-			player.animation.play('left');
 		}
 		else if (FlxG.keys.pressed.RIGHT)
 		{
 			player.velocity.set(PLAYER_SPEED, player.velocity.y);
 			anythingPressed = true;
-			player.animation.play('right');
-		} else {
+		}
+        else
+        {
 			player.velocity.set(0, player.velocity.y);
 		}
 
 		if (!anythingPressed) {
-			player.animation.curAnim.stop();
 			player.velocity.set(0, 0);
 		}
-
 
 		super.update(elapsed);
 	}
