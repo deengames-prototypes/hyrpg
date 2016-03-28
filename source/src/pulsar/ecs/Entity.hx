@@ -5,12 +5,13 @@ import pulsar.ecs.EventBus;
 
 class Entity
 {
-    // TODO: add method to receive an event and call a function
-    
     // Haxe doesn't seem to allow compiling with Class<Component> as the key.
-    // Ditto for a Map<Dynamic, Component>.
-    // If that ever changes, turn this into a right proper Map<Class<Component>, Component>
-    private var componentMap:ObjectMap<Dynamic, Component> = new ObjectMap<Dynamic, Component>();
+    // Ditto for a Map<Dynamic, Component>. Using haxe.ds.ObjectMap is shady (generates weak-references
+    // in dynamic languages, and Dynamic has a definite runtime cost.) Let's go with the simpler approach
+    // of keeping components in an array. Lookup is O(n), but n is relatively small per entity, and the
+    // number of entities in total is also quite small. If performance suffers, try something different,
+    // like having the rendering system look up the SpriteComponent once, and keep a reference.
+    private var components:Array<Component> = new Array<Component>();
     // Events are a string key; the callback takes a single dynamic param as input.
     private var eventHandlers:Map<String, Dynamic -> Void> = new Map<String, Dynamic -> Void>();
 
@@ -19,16 +20,52 @@ class Entity
         EventBus.getInstance().add(this);
     }
     
+    /**
+    Adds a component to this entity. Throws if there's already a component of
+    that type in this entity.
+    */
     public function add(component:Component):Entity
     {
-        var key = Type.getClass(component);
-        this.componentMap.set(key, component);
+        if (this.has(Type.getClass(component)))
+        {
+            throw 'Entity already has a component of the same type as ${component}';
+        }
+        
+        this.components.push(component);
         return this; // for chaining calls
     }
     
-    public function get(type:Class<Component>):Dynamic
+    /** Gets the component of an entity, eg. entity.get(SpriteComponent)
+    Throws if there's no component of that type.
+    */
+    public function get(clazz:Class<Component>):Dynamic
     {
-        return this.componentMap.get(type);
+        for (component in this.components)
+        {
+            if (Type.getClass(component) == clazz)
+            {
+                return component;
+            }
+        }
+        
+        throw 'Entity ${this} doesn\'t have a component of type ${clazz}';
+    }
+    
+    /**
+    Check if a component of the specified type exists.
+    */
+    public function has(clazz:Class<Component>):Bool
+    {
+        for (component in this.components)
+        {
+            if (Type.getClass(component) == clazz)
+            {
+                return true;
+            }
+        }
+        
+        return false;    
+        
     }
     
     public function onEvent(eventName:String, callback:Dynamic -> Void)

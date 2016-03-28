@@ -5,11 +5,13 @@ import pulsar.ecs.Component;
 import pulsar.ecs.Entity;
 import pulsar.ecs.EventBus;
 
+import test.Assert2;
+
 @:access(pulsar.ecs.EventBus)
 class EntityTest
 {
     @Test
-    public function getGetsComponentAdded()
+    public function getGetsComponentAddedByAdd()
     {
         var e:Entity = new Entity();
         var expected = new StringComponent("test value");
@@ -18,24 +20,48 @@ class EntityTest
 
         Assert.areEqual(expected, actual);
         Assert.areEqual("test value", actual.value);
+    }    
+    
+    @Test
+    public function getThrowsIfComponentIsntAdded()
+    {
+        var e = new Entity();
+        var message:String = Assert2.throws(function()
+        {
+            e.get(StringComponent);
+        });
+        
+        Assert.isTrue(message.indexOf("doesn't have") > -1);
     }
     
     @Test
-    public function getGetsLastComponentAddedOfThatType()
+    public function hasReturnsTrueIfComponentWasAdded()
     {
         var e:Entity = new Entity();
-        var expected = new StringComponent("correct value");
+        e.add(new StringComponent("exists!"));
+        Assert.isTrue(e.has(StringComponent));
+    }
+    
+    @Test
+    public function hasReturnsFalseIfComponentWasntAdded()
+    {
+        var e:Entity = new Entity();
+        e.add(new StringComponent("string"));
+        Assert.isFalse(new Entity().has(IntComponent));
+    }
+    
+    @Test
+    public function addThrowsIfComponentIsAlreadyAdded()
+    {
+        var e:Entity = new Entity();
+        e.add(new StringComponent("doesn't throw"));
         
-        e.add(new StringComponent("wrong value"));
-        e.add(expected);
-        e.add(new IntComponent(37));
+        var message:String = Assert2.throws(function()
+        {
+            e.add(new StringComponent("throws"));
+        });
         
-        var actual:StringComponent = e.get(StringComponent);
-
-        Assert.areEqual(expected, actual);
-        Assert.areEqual("correct value", actual.value);
-        
-        Assert.areEqual(37, e.get(IntComponent).value);
+        Assert.isTrue(message.indexOf('already has a component') > -1);
     }
     
     @Test
