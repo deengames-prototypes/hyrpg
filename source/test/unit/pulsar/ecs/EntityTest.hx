@@ -5,7 +5,7 @@ import pulsar.ecs.Component;
 import pulsar.ecs.Entity;
 import pulsar.ecs.EventBus;
 
-import test.Assert2;
+import nucleus.test.Assert2;
 
 @:access(pulsar.ecs.EventBus)
 class EntityTest
