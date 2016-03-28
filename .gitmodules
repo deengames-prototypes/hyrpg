@@ -1,3 +1,6 @@
 [submodule "p2"]
 	path = prototype/game-prototyping
 	url = https://github.com/ashes999/game-prototyping.git
+[submodule "source/src/nucleus"]
+	path = source/src/nucleus
+	url = https://github.com/ashes999/nucleus
