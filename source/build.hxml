@@ -1,6 +1,0 @@
---cwd source
---remap flash:openfl
--main Main
--lib markdown
--neko Main.n
-
